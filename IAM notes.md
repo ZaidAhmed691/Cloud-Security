@@ -1,4 +1,4 @@
-# This file contains my understandings on IAM & identity from a security lens
+# My personal notes and understandings on IAM, Identity & Zero Trust
 ## Every topic covered and learnt is based on the following 5 questions:
 1. What is it?
 2. What API or system is involved?
