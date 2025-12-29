@@ -32,7 +32,10 @@ SSH using key pair (or Session Manager)
 
 ### d. Linux terminal commands (inside EC2)
 
+```bash
 aws s3 ls
+```
+
 ### i. Get EC2 instance meta data
 
 ```bash
