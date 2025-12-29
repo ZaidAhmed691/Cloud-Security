@@ -1,6 +1,6 @@
 # Practice and labs testing
 
-## 1. Create an IAM role to access an AWS service (console)
+# 1. Create an IAM role to access an AWS service (console)
 
 ### a. Create IAM Role 
 
@@ -40,7 +40,7 @@ curl http://169.254.169.254/latest/meta-data/iam/security-credentials
 ### iii. Get sts security credentials for an IAM role from the EC2 instance meta data
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[put-role-name]
 
-## 2. Create an IAM role to access an AWS resource via cross account and switching roles (console)
+# 2. Create an IAM role to access an AWS resource via cross account and switching roles (console)
 
 ### a. In Account A (your AWS account)
 
