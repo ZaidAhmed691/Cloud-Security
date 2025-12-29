@@ -1,6 +1,6 @@
 # Practice and labs testing
 
-# 1. Create an IAM role to access an AWS service (console)
+# 1. Create an IAM role to access an AWS resource (console)
 
 ### a. Create IAM Role 
 
