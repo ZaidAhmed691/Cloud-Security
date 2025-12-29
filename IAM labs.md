@@ -277,14 +277,14 @@ Credentials are temporary and rotatable
 Immediately stop an external account from accessing Account A’s S3 resources by revoking permissions from an IAM role.
 
 
-## a. Context
+### a. Context
 
 * Account B previously assumed a role in Account A
 * Role had **S3 List + Read** permissions
 * Temporary STS credentials were already issued
 
 
-## b. Revocation Action (Account A)
+### b. Revocation Action (Account A)
 
 1. Go to **IAM → Roles → <RoleName>**
 2. **Detach or remove** the S3 read/list permission policy
@@ -292,20 +292,20 @@ Immediately stop an external account from accessing Account A’s S3 resources b
    * OR delete the role entirely
 
 
-## c. What Revocation Enforces
+### c. What Revocation Enforces
 
 * ❌ Any **new** S3 requests using existing STS credentials are denied
 * ❌ Future role assumptions inherit the revoked permissions
 * ✅ Enforcement is **immediate**
 
 
-## d. What Revocation Does NOT Do
+### d. What Revocation Does NOT Do
 
 * Does NOT invalidate already-issued STS credentials
 * Does NOT undo data already accessed or downloaded
 * Does NOT wait for session expiration
 
-## e. Verification (Account B CLI)
+### e. Verification (Account B CLI)
 
 ```bash
 aws s3 ls s3://account-a-bucket
@@ -315,14 +315,14 @@ Expected result:
 
 * `AccessDenied`
 
-## Key Security Insight
+### Key Security Insight
 
 > STS credentials are evaluated **at request time**, not at issuance time.
 
 Changing a role’s policy instantly changes what existing sessions can do.
 
----
-
-## One-line Takeaway
+### One-line Takeaway
 
 **Revoking permissions stops future access immediately by changing authorization, not credentials.**
+
+---
