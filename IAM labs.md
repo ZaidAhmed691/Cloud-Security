@@ -40,3 +40,64 @@ curl http://169.254.169.254/latest/meta-data/iam/security-credentials
 ### iii. Get sts security credentials for an IAM role from the EC2 instance meta data
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[put-role-name]
 
+## 2. Create an IAM role to access an AWS resource via cross account and switching roles (console)
+
+### a. In Account A (your AWS account)
+
+### i. Create IAM Role
+
+IAM → Roles → Create role
+
+Trusted entity: Another AWS account
+
+Account ID: Account B
+
+Permissions:
+
+Attach S3 Read-Only access
+(preferably bucket-scoped, or AmazonS3ReadOnlyAccess for lab)
+
+Role name: ExternalS3ReadOnlyRole
+
+Trust relationship
+
+Ensure trust policy allows Account B to sts:AssumeRole
+
+### b. In Account B (external user account)
+
+### i. Create IAM User
+
+IAM → Users → Create user
+
+Enable AWS Console access (and/or programmatic)
+
+No S3 permissions needed
+
+### ii. Allow user to assume role
+
+Attach policy to the user:
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::<ACCOUNT_A_ID>:role/ExternalS3ReadOnlyRole"
+    }
+  ]
+}
+
+### iii. Console: Switch Role (Account B user)
+
+Login as IAM user in Account B
+
+Top-right menu → Switch role
+
+Account ID: Account A
+
+Role name: ExternalS3ReadOnlyRole
+
+Display name: optional
+
+You are now temporarily authenticated in Account A
