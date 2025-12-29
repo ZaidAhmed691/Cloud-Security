@@ -213,11 +213,14 @@ Account ID = Account A
 ARN contains: assumed-role/ExternalS3ReadListRole
 
 ### v. Part 4 — Validate S3 Access (Account B)
-aws s3 ls
-aws s3 ls s3://account-a-bucket
-aws s3 cp s3://account-a-bucket/file.txt -
 
-Expected:
+aws s3 ls
+
+aws s3 ls s3://account-a-bucket
+
+aws s3 cp "s3://account-a-bucket/file name" -
+
+### Expected:
 
 ✅ List buckets / objects
 
