@@ -38,5 +38,5 @@ curl http://169.254.169.254/latest/meta-data
 ### ii. Get IAM and security credentials
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials
 ### iii. Get sts security credentials for an IAM role from the EC2 instance meta data
-curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[put_role_name]
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[put-role-name]
 
