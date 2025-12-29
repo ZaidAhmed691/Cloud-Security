@@ -34,11 +34,22 @@ SSH using key pair (or Session Manager)
 
 aws s3 ls
 ### i. Get EC2 instance meta data
+
+```bash
 curl http://169.254.169.254/latest/meta-data
+```
+
 ### ii. Get IAM and security credentials
+
+```bash
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials
+```
+
 ### iii. Get sts security credentials for an IAM role from the EC2 instance meta data
+
+```bash
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[put-role-name]
+```
 
 # 2. Create an IAM role to access an AWS resource via cross account and switching roles (console)
 
@@ -77,6 +88,7 @@ No S3 permissions needed
 
 Attach policy to the user:
 
+```bash
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -87,6 +99,7 @@ Attach policy to the user:
     }
   ]
 }
+```
 
 ### iii. Console: Switch Role (Account B user)
 
@@ -101,6 +114,8 @@ Role name: ExternalS3ReadOnlyRole
 Display name: optional
 
 You are now temporarily authenticated in Account A
+
+---
 
 # 3. Cross-Account S3 Read/List via External ID
 
@@ -164,7 +179,9 @@ aws sts get-caller-identity
 Information shared with Account B:
 
 Role ARN:
+```bash
 arn:aws:iam::<ACCOUNT_A_ID>:role/ExternalS3ReadListRole
+```
 
 External ID:
 ext-s3-read-001
@@ -182,10 +199,10 @@ Expected:
 Account ID = Account B
 
 ### ii. Assume Role in Account A (with External ID)
-aws sts assume-role \
-  --role-arn arn:aws:iam::<ACCOUNT_A_ID>:role/ExternalS3ReadListRole
-  --role-session-name 
-  --external-id 
+
+```bash
+aws sts assume-role --role-arn arn:aws:iam::<ACCOUNT_A_ID>:role/ExternalS3ReadListRole --role-session-name --external-id 
+```
 
 Output returns temporary credentials:
 
@@ -196,15 +213,25 @@ SecretAccessKey
 SessionToken
 
 ### iii. Set Temporary Credentials (Account B)
+```bash
 export AWS_ACCESS_KEY_ID=ASIA...
+```
+
+```bash
 export AWS_SECRET_ACCESS_KEY=...
+```
+
+```bash
 export AWS_SESSION_TOKEN=...
+```
 
 All three are mandatory
 
 ### iv. Verify Assumed Role Identity
 
+```bash
 aws sts get-caller-identity
+```
 
 Expected:
 
@@ -214,11 +241,17 @@ ARN contains: assumed-role/ExternalS3ReadListRole
 
 ### v. Part 4 — Validate S3 Access (Account B)
 
+```bash
 aws s3 ls
+```
 
+```bash
 aws s3 ls s3://account-a-bucket
+```
 
+```bash
 aws s3 cp "s3://account-a-bucket/file name" -
+```
 
 ### Expected:
 
@@ -235,3 +268,61 @@ External ID prevents confused deputy attacks
 Role trust + permissions are separate controls
 
 Credentials are temporary and rotatable
+
+---
+
+## 4. Revoking Access for an Assumed Role (Console)
+
+**Goal**
+Immediately stop an external account from accessing Account A’s S3 resources by revoking permissions from an IAM role.
+
+
+## a. Context
+
+* Account B previously assumed a role in Account A
+* Role had **S3 List + Read** permissions
+* Temporary STS credentials were already issued
+
+
+## b. Revocation Action (Account A)
+
+1. Go to **IAM → Roles → <RoleName>**
+2. **Detach or remove** the S3 read/list permission policy
+
+   * OR delete the role entirely
+
+
+## c. What Revocation Enforces
+
+* ❌ Any **new** S3 requests using existing STS credentials are denied
+* ❌ Future role assumptions inherit the revoked permissions
+* ✅ Enforcement is **immediate**
+
+
+## d. What Revocation Does NOT Do
+
+* Does NOT invalidate already-issued STS credentials
+* Does NOT undo data already accessed or downloaded
+* Does NOT wait for session expiration
+
+## e. Verification (Account B CLI)
+
+```bash
+aws s3 ls s3://account-a-bucket
+```
+
+Expected result:
+
+* `AccessDenied`
+
+## Key Security Insight
+
+> STS credentials are evaluated **at request time**, not at issuance time.
+
+Changing a role’s policy instantly changes what existing sessions can do.
+
+---
+
+## One-line Takeaway
+
+**Revoking permissions stops future access immediately by changing authorization, not credentials.**
