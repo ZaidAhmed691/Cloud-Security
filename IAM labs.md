@@ -324,6 +324,76 @@ Expected result:
 
 Changing a role’s policy instantly changes what existing sessions can do.
 
+---
+
+## 5. Constrained Admin with Permission Boundary (James)
+
+**Goal**
+
+Create an IAM test user **James** with full admin-style capabilities **without allowing privilege escalation**, self-permission changes, or removal of guardrails.
+
+## High-level Idea
+
+> James can manage AWS resources and IAM for others,
+> but **cannot change his own permissions or bypass boundaries**.
+
+This is achieved using:
+
+* `AdministratorAccess` (identity policy)
+* A **permission boundary** (maximum permissions)
+
+## Lab Flow
+
+### a. Create Permission Boundary Policy
+
+* IAM → Policies → Create policy
+* Type: **Customer managed policy**
+* Purpose: restrict IAM privilege escalation and self-management
+
+(Policy JSON documented separately in policy notes)
+
+### b. Create IAM User: James
+
+* IAM → Users → Create user
+* Username: `James`
+* Enable console and/or programmatic access
+
+### c. Attach Identity Policy
+
+* Attach **AdministratorAccess** managed policy
+
+This grants James broad admin capabilities.
+
+### d. Apply Permission Boundary
+
+* Set **permission boundary** to the custom boundary policy
+
+This caps what James can actually do, even with admin access.
+
+### e. Validate Behavior (Mental Checks)
+
+James **can**:
+
+* Manage AWS services (EC2, S3, VPC, CloudWatch, etc.)
+* Manage IAM users and groups **other than himself**
+
+James **cannot**:
+
+* Change his own permissions
+* Remove permission boundaries
+* Modify boundary policies
+* Escalate privileges
+
+### Security Outcome
+
+* Least privilege enforced at the admin level
+* No self-escalation paths
+* Safe delegation of IAM responsibilities
+
+### One-line Takeaway
+
+> **Permission boundaries turn full admins into safe admins.**
+
 ### One-line Takeaway
 
 **Revoking permissions stops future access immediately by changing authorization, not credentials.**
