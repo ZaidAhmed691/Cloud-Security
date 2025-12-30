@@ -274,7 +274,7 @@ Credentials are temporary and rotatable
 
 ---
 
-## 4. Revoking Access for an Assumed Role (Console)
+# 4. Revoking Access for an Assumed Role (Console)
 
 **Goal**
 Immediately stop an external account from accessing Account A’s S3 resources by revoking permissions from an IAM role.
@@ -330,7 +330,7 @@ Changing a role’s policy instantly changes what existing sessions can do.
 
 ---
 
-## 5. Constrained Admin with Permission Boundary (James)
+# 5. Constrained Admin with Permission Boundary (James)
 
 **Goal**
 
@@ -397,5 +397,85 @@ James **cannot**:
 ### One-line Takeaway
 
 > **Permission boundaries turn full admins into safe admins.**
+
+---
+
+# 6. Deny S3 Bucket Creation for User Matt
+
+**Goal**
+
+Explicitly deny user **Matt** from creating new S3 buckets, even though he already has **full S3 access**.
+
+## High-level Idea
+
+> In IAM, an **explicit Deny always overrides any Allow**.
+
+So even if Matt has `AmazonS3FullAccess`, we can block **only** bucket creation using a deny policy.
+
+## Lab Flow (High Level)
+
+###  a. Initial State
+
+* IAM user: **Matt**
+* Permissions attached:
+
+  * `AmazonS3FullAccess`
+* Result:
+
+  * Matt can create, delete, and manage S3 buckets
+
+### b. Create a Deny Policy
+
+* IAM → Policies → Create policy
+* Type: **Customer managed policy**
+* Purpose: deny `s3:CreateBucket`
+
+**JSON policy**
+
+```json
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "DenyCreateS3Bucket",
+"Effect": "Deny",
+"Action": "s3:CreateBucket",
+"Resource": "*"
+}
+]
+}
+```
+
+### c. Attach Deny Policy to Matt
+
+* IAM → Users → Matt
+* Attach the deny policy
+
+---
+
+### d. Validate Behavior
+
+Matt **can**:
+
+* List buckets
+* Upload / download objects
+* Delete objects
+
+Matt **cannot**:
+
+* Create new S3 buckets
+
+### Expected Result
+
+* `aws s3 mb s3://new-bucket-name` → ❌ AccessDenied
+* Existing S3 operations continue to work
+
+### Key Security Insight
+
+> Deny policies are used for **surgical restrictions**, not broad permission removal.
+
+## One-line Takeaway
+
+> **Explicit Deny beats full access every time.**
 
 ---
