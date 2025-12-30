@@ -324,6 +324,10 @@ Expected result:
 
 Changing a role’s policy instantly changes what existing sessions can do.
 
+### One-line Takeaway
+
+**Revoking permissions stops future access immediately by changing authorization, not credentials.**
+
 ---
 
 ## 5. Constrained Admin with Permission Boundary (James)
@@ -393,9 +397,5 @@ James **cannot**:
 ### One-line Takeaway
 
 > **Permission boundaries turn full admins into safe admins.**
-
-### One-line Takeaway
-
-**Revoking permissions stops future access immediately by changing authorization, not credentials.**
 
 ---
