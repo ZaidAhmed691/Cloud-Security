@@ -3,6 +3,7 @@
 ## 1. IAM Policy Note — Permission Boundary for Constrained Admin (James)
 
 **Purpose**
+
 Define a permission boundary that allows broad IAM and CloudWatch administration **while preventing self-permission changes, boundary removal, and privilege escalation**.
 
 ## Permission Boundary Policy (JSON)
