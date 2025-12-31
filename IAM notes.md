@@ -34,6 +34,53 @@ EC2 IMDS, which is accessed via the link local IP '169.254.169.254' using HTTP r
 ### -- Which permission allows it?
 No IAM permission is required to read the instance metadata. Access is controlled by instance configuration (IMDS enabled/IMDSv1/v2 settings)
 
+# IAM Note — Trust vs AssumeRole Permission
+
+## Example Scenario
+
+* **Account A** created a role and trusted **Account B** (via account ID)
+* **Account B** has two users:
+
+  * `AdminIAMUser` → full admin access
+  * `S3ResourceManager` → only S3 permissions
+
+Observed behavior:
+
+* `AdminIAMUser` could **Switch Role** into Account A
+* `S3ResourceManager` could **not** switch role
+
+### Why This Happens
+
+Cross-account role assumption requires **two independent approvals**:
+
+1. **Role trust (Account A)**
+   The role must trust the external account.
+
+2. **Caller permission (Account B)**
+   The user must be explicitly allowed to call `sts:AssumeRole`.
+
+Even if a role trusts an account, **individual users in that account cannot assume the role unless they personally have `sts:AssumeRole` permission**.
+
+### What Passed vs What Failed
+
+* `AdminIAMUser`:
+
+  * Has `AdministratorAccess`
+  * Includes `sts:AssumeRole`
+  * ✅ Allowed to switch role
+
+* `S3ResourceManager`:
+
+  * Has only `AmazonS3FullAccess`
+  * Does NOT include `sts:AssumeRole`
+  * ❌ Denied role switch
+
+### Key Insight
+
+> **Trust says “who may assume me”; permissions decide “who actually can.”**
+
+Both must allow the action.
+
 ### -- Why does this exist?
 If IMDS is exposed to untrusted workloads or IMDSv1 is enabled, attackers can steal temporary credentials and use them to access AWS resources.
 
