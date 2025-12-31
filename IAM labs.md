@@ -217,15 +217,15 @@ SessionToken
 
 ### iii. Set Temporary Credentials (Account B)
 ```bash
-export AWS_ACCESS_KEY_ID=ASIA...
+set AWS_ACCESS_KEY_ID=
 ```
 
 ```bash
-export AWS_SECRET_ACCESS_KEY=...
+set AWS_SECRET_ACCESS_KEY=
 ```
 
 ```bash
-export AWS_SESSION_TOKEN=...
+set AWS_SESSION_TOKEN=
 ```
 
 All three are mandatory
