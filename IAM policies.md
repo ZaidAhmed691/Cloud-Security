@@ -1,6 +1,6 @@
 # JSON Policies
 
-## 1. IAM Policy Note — Permission Boundary for Constrained Admin (James)
+# 1. Permission Boundary for Constrained Admin (James)
 
 **Purpose**
 
@@ -99,3 +99,34 @@ Define a permission boundary that allows broad IAM and CloudWatch administration
 
 ---
 
+# 2. Allow S3ResourceManager to Assume Role
+
+**Purpose**
+Allow the IAM user **S3ResourceManager** in **Account B** to assume a specific IAM role in **Account A** using AWS STS.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::<ACCOUNT_A_ID>:role/auditfindata"
+    }
+  ]
+}
+```
+
+## Policy Behavior
+
+* Grants permission to call `sts:AssumeRole`
+* Scoped to **one specific role only**
+* Does not grant any AWS service permissions by itself
+
+---
+
+## Security Insight
+
+> This policy controls **who is allowed to attempt role assumption**, not what the role can do.
+
+---
