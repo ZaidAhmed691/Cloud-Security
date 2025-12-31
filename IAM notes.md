@@ -34,6 +34,14 @@ EC2 IMDS, which is accessed via the link local IP '169.254.169.254' using HTTP r
 ### -- Which permission allows it?
 No IAM permission is required to read the instance metadata. Access is controlled by instance configuration (IMDS enabled/IMDSv1/v2 settings)
 
+### -- Why does this exist?
+If IMDS is exposed to untrusted workloads or IMDSv1 is enabled, attackers can steal temporary credentials and use them to access AWS resources.
+
+### -- Key Takeaway
+IMDS provides identity credentials to EC2 instances not application data. Access to services like S3 always happens through AWS APIs using these credentials.
+
+--- 
+
 # 2. IAM Note — Trust vs AssumeRole Permission
 
 ## Example Scenario
@@ -80,9 +88,3 @@ Even if a role trusts an account, **individual users in that account cannot assu
 > **Trust says “who may assume me”; permissions decide “who actually can.”**
 
 Both must allow the action.
-
-### -- Why does this exist?
-If IMDS is exposed to untrusted workloads or IMDSv1 is enabled, attackers can steal temporary credentials and use them to access AWS resources.
-
-### -- Key Takeaway
-IMDS provides identity credentials to EC2 instances not application data. Access to services like S3 always happens through AWS APIs using these credentials.
