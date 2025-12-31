@@ -88,3 +88,9 @@ Even if a role trusts an account, **individual users in that account cannot assu
 > **Trust says “who may assume me”; permissions decide “who actually can.”**
 
 Both must allow the action.
+
+### One-line Takeaway
+
+A trusted account is not enough — the user must also be allowed to assume roles.
+
+---
