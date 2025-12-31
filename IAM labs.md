@@ -253,7 +253,7 @@ aws s3 ls s3://account-a-bucket
 ```
 
 ```bash
-aws s3 cp "s3://account-a-bucket/file name" -
+aws s3 cp s3://zaid-bucket-2025/your-file.txt -
 ```
 
 ### Expected:
