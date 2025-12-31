@@ -6,7 +6,7 @@
 4. Why does this exist?
 5. What can go wrong?
 
-## 1. Creating an IAM User (AWS CLI)
+# 1. Creating an IAM User (AWS CLI)
 
 ### -- What is it?
 Creating a long-lived human identity in AWS using the IAM CreateUser API. This identity can later be granted permissions via IAM policies.
@@ -34,7 +34,7 @@ EC2 IMDS, which is accessed via the link local IP '169.254.169.254' using HTTP r
 ### -- Which permission allows it?
 No IAM permission is required to read the instance metadata. Access is controlled by instance configuration (IMDS enabled/IMDSv1/v2 settings)
 
-# IAM Note — Trust vs AssumeRole Permission
+# 2. IAM Note — Trust vs AssumeRole Permission
 
 ## Example Scenario
 
