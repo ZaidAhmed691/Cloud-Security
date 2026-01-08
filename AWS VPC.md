@@ -155,3 +155,129 @@ Routing + Gateways = Traffic control
 * Security Groups vs NACLs
 
 ---
+
+Below is **GitHub-friendly, exam-style Markdown**, numbered exactly as requested and easy to re-paste into your notes repo.
+
+---
+
+# 2. AWS VPC DHCP Option Sets
+
+> **Goal:** Control DHCP configuration parameters for instances inside a VPC.
+
+---
+
+## How DHCP Works in AWS VPC
+
+* AWS **automatically handles IP address assignment**
+* IP ranges are defined by **subnet CIDR**
+* You **do NOT define DHCP IP pools manually** like on-prem
+
+👉 In AWS, you only configure **DHCP options**, not address ranges
+
+---
+
+## What Is a DHCP Option?
+
+* A **DHCP option** is a configuration parameter delivered via DHCP
+* Devices receive:
+
+  * IP address (automatic)
+  * Subnet mask
+  * Default gateway
+  * **Additional options** (DNS, domain name, NTP, etc.)
+
+---
+
+## DHCP Option Sets
+
+* A **DHCP Option Set** is a collection of DHCP configuration parameters
+* Created separately, then **associated with a VPC**
+* A VPC can have **only one DHCP option set at a time**
+
+---
+
+## DHCP Options You Can Configure
+
+1. **Domain Name**
+
+   * Example: `sales.mycompany.local`
+2. **Domain Name Servers (DNS)**
+
+   * Example: `8.8.8.8` (Google DNS)
+3. **NTP Servers**
+
+   * Example: `10.10.10.37`
+4. **NetBIOS Name Servers** (legacy)
+5. **NetBIOS Node Type** (legacy)
+
+📌 You do **not** need to configure all options
+
+---
+
+## Steps to Create a DHCP Option Set
+
+1. Go to **VPC Console**
+2. Select **DHCP Option Sets**
+3. Click **Create DHCP option set**
+4. Enter **Name tag** (e.g., `SALES`)
+5. Configure required options:
+
+   * Domain name
+   * DNS servers
+   * NTP servers (optional)
+6. Click **Create**
+
+---
+
+## After Creation
+
+* DHCP option set exists independently
+* Must be **associated with a VPC** to take effect
+* Applies to **all instances launched in that VPC**
+* Existing instances may require **renew/restart** to pick up changes
+
+---
+
+## Key Rules (Exam-Focused)
+
+* Subnet CIDR defines IP range, **not DHCP**
+* DHCP Option Sets define **configuration only**
+* One DHCP Option Set per VPC
+* Multiple option sets may exist, but **only one active per VPC**
+
+---
+
+## Common Exam Traps
+
+* ❌ “Define DHCP IP pool in AWS” → **Wrong**
+* ❌ “DHCP configured per subnet” → **Wrong**
+* ✅ “DHCP options configured at VPC level” → **Correct**
+
+---
+
+## Lab Mental Model
+
+```text
+Subnet = IP range
+DHCP Option Set = configuration parameters
+VPC = attachment point
+```
+
+---
+
+## When You’d Use Multiple DHCP Option Sets
+
+* Different environments (dev / prod)
+* Different DNS or NTP requirements
+* Multiple VPCs with different policies
+
+---
+
+## What This Connects To Next
+
+* VPC associations
+* EC2 instance networking
+* Route tables & gateways
+* Hybrid networking (VPN / Direct Connect)
+
+---
