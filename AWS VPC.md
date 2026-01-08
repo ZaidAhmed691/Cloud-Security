@@ -281,3 +281,160 @@ VPC = attachment point
 * Hybrid networking (VPN / Direct Connect)
 
 ---
+
+Below is **GitHub-friendly, exam-style Markdown**, numbered exactly as requested and ready to paste into your notes repo.
+
+---
+
+# 3. AWS Elastic IPs (EIP)
+
+> **Goal:** Provide a stable public IPv4 address for internet-facing resources in a VPC.
+
+---
+
+## What Is an Elastic IP (EIP)?
+
+* An **Elastic IP** is a **public IPv4 address**
+* Allocated from the **AWS region** where your VPC exists
+* Used to make instances **reachable from the internet**
+
+---
+
+## Why “Elastic”?
+
+* Can be **re-associated** with another instance
+* Useful for:
+
+  * Instance replacement
+  * Failover
+  * Maintenance without DNS changes
+
+📌 Elastic ≠ temporary
+
+---
+
+## Key Characteristics (High Yield)
+
+* **Public IP** (not private ranges like `10.x`, `172.16–31.x`, `192.168.x`)
+* **Allocated to your AWS account**
+* **Remains allocated until released**
+* **Charged while allocated**, even if unused
+
+---
+
+## Cost Rule (Very Important)
+
+* You are **charged for an EIP when it is not associated**
+* Unused EIPs = **wasted money**
+
+**Exam Tip:**
+AWS charges to discourage public IPv4 hoarding
+
+---
+
+## How EIPs Are Used
+
+* EIPs are **associated with an Elastic Network Interface (ENI)**
+* ENI attaches to:
+
+  * EC2 instance
+  * Other supported services
+
+```text
+EIP → ENI → EC2 Instance
+```
+
+---
+
+## Region Limitation
+
+* EIPs are **region-specific**
+* Can be moved:
+
+  * Between instances
+  * **Only within the same region**
+
+❌ Cannot move an EIP across regions
+
+---
+
+## When You Need an EIP
+
+* Internet-facing servers
+* Static public IP requirement
+* Legacy apps needing fixed IPs
+* External systems whitelisting IPs
+
+---
+
+## Steps to Allocate an Elastic IP
+
+1. Go to **VPC Console**
+2. Select **Elastic IPs**
+3. Click **Allocate Elastic IP address**
+4. Choose:
+
+   * **Amazon pool** (most common)
+   * Or **Customer-owned IP**
+5. Click **Allocate**
+
+---
+
+## After Allocation
+
+* EIP is:
+
+  * Assigned to your account
+  * **Not attached to anything yet**
+* Starts **incurring cost if unused**
+
+---
+
+## Associate an Elastic IP
+
+* Associate EIP with:
+
+  * An **ENI**
+  * Or directly to an **EC2 instance**
+* This enables **public internet access**
+
+---
+
+## How to Release an Elastic IP
+
+1. Ensure it is **not associated** with any instance
+2. Select the EIP
+3. **Actions → Release Elastic IP addresses**
+4. Confirm release
+
+📌 Always verify before releasing
+
+---
+
+## Common Exam Traps
+
+* ❌ “EIPs are free” → **Wrong**
+* ❌ “EIPs are private IPs” → **Wrong**
+* ❌ “EIPs can move across regions” → **Wrong**
+* ✅ “Charged when allocated and unused” → **Correct**
+
+---
+
+## Lab Mental Model
+
+```text
+Private IP → internal communication
+Public IP / EIP → internet access
+EIP = stable public identity
+```
+
+---
+
+## What This Connects To Next
+
+* Internet Gateways
+* Route Tables
+* Public vs Private Subnets
+* NAT Gateway vs EIP usage
+
+---
