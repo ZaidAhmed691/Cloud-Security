@@ -927,3 +927,118 @@ Benefits:
 Peering still works—but **VPC sharing is often the cleaner solution**.
 
 ---
+
+# 8. Security Groups vs Network ACLs (Core Concepts)
+
+## What a Security Group Is (and Is NOT)
+In AWS, a **security group** is **not**:
+- A group of users
+- A directory or identity-based permission model
+
+Instead, a security group:
+- Acts like a **firewall**
+- Is **applied to instances**, not subnets
+- Controls **network traffic**, not user permissions
+
+Think of it like:
+- A **host-based firewall** (e.g., Windows Firewall)
+
+---
+
+## Security Groups: Key Characteristics
+
+### Applied To
+- **EC2 instances**
+- Not subnets
+
+### Traffic Control
+- **Ingress** → incoming traffic
+- **Egress** → outgoing traffic
+
+### Rule Type
+- **Allow rules only**
+- **Deny is implicit**
+
+Default behavior:
+- **Closed by default**
+- Nothing is allowed unless explicitly permitted  
+(“Closed-to-open” model)
+
+---
+
+### Stateful Firewall
+Security groups are **stateful**:
+- If an instance initiates outbound traffic
+- The response traffic is **automatically allowed back in**
+- No need to create explicit inbound rules for return traffic
+
+---
+
+## Network Access Control Lists (NACLs)
+
+### What They Are
+- A **subnet-level** security control
+- Applied to **subnets**, not instances
+
+Think of them like:
+- **Router ACLs**
+- **Network-level firewalls**
+
+---
+
+### Key Differences from Security Groups
+
+| Feature | Security Group | Network ACL |
+|------|---------------|-------------|
+| Applied to | Instance | Subnet |
+| Stateful | Yes | No |
+| Rule types | Allow only | Allow and Deny |
+| Evaluation | All rules apply | First match wins |
+
+---
+
+### Stateless Processing
+NACLs are **stateless**:
+- Inbound and outbound traffic must both be explicitly allowed
+- Return traffic is **not automatically permitted**
+
+---
+
+### Rule Evaluation Order
+- Rules are numbered
+- **Lowest number is evaluated first**
+- **First matching rule applies**
+- Processing stops after the first match
+
+Example:
+- Rule 2 = Deny
+- Rule 3 = Allow  
+→ Traffic is **denied** (rule 2 matches first)
+
+Order matters.
+
+---
+
+## When to Use Each
+
+### Security Groups
+- Instance-level protection
+- Primary and most commonly used control
+- Fine-grained and stateful
+
+### Network ACLs
+- Subnet-level guardrails
+- Coarse-grained control
+- Useful for broad allow/deny rules
+
+---
+
+## Final Takeaway
+- **Security Groups** = instance-level, stateful, allow-only firewalls
+- **Network ACLs** = subnet-level, stateless, ordered allow/deny rules
+- Both work together to control traffic inside a VPC
+- Misconfigured rules are often the reason “nothing can connect”
+
+Always check **security groups first** when troubleshooting connectivity.
+
+---
