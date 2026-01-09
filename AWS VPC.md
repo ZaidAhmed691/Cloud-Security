@@ -685,3 +685,245 @@ Example policy structure:
 "Action": "*",
 "Resource": "*"
 }
+```
+
+---
+
+# 6. VPC Peering (Concepts & Fundamentals)
+
+## What Is VPC Peering?
+**VPC Peering** is a way to **connect one Virtual Private Cloud (VPC) to another** so that resources in each VPC can communicate with each other.
+
+By default:
+- **VPCs cannot communicate with other VPCs**
+- A connection must be explicitly created
+
+Example use cases:
+- SALES VPC ↔ MARKETING VPC
+- Management VPC ↔ Production VPC
+- Development VPC ↔ Production VPC
+- Corporate VPC ↔ Partner VPC
+
+---
+
+## Real-World Analogy
+Think of VPC Peering like:
+- Building a **WAN connection** between two company networks
+
+In the physical world:
+- Two companies merge
+- Each has its own network
+- A WAN link is created so they can collaborate
+
+In AWS:
+- Each company network = a VPC
+- WAN link = **VPC Peering connection**
+
+---
+
+## Key Characteristics of VPC Peering
+
+### 1. One VPC Connects Directly to Another
+- Peering is a **direct, one-to-one relationship**
+- It simply means:  
+  **VPC A ↔ VPC B**
+
+---
+
+### 2. VPC Peering Is NOT Transitive (Very Important)
+Peering connections **do not pass through other VPCs**.
+
+Example:
+- SALES VPC is peered with VPC 2
+- VPC 2 is peered with MARKETING VPC
+
+❌ This does **NOT** mean:
+- SALES can communicate with MARKETING
+
+✅ For SALES and MARKETING to communicate:
+- They must be **directly peered**
+
+Rule:
+
+Every VPC pair that needs communication must have its **own peering connection**.
+
+---
+
+## Common Peering Scenarios
+- Management VPC ↔ Production VPC
+- Development VPC ↔ Production VPC
+- Corporate VPC ↔ Partner VPC
+
+If *everyone* must talk to *everyone*:
+- Each VPC must be **explicitly peered** with the others
+
+---
+
+## How VPC Peering Is Created (High-Level Process)
+
+### 1. Initiator and Receiver
+- One VPC **initiates** the peering request
+- The other VPC **receives** and **accepts** it
+- Either VPC can be the initiator
+
+Important:
+- **Only the VPC owner can initiate or accept peering**
+- An admin alone is not sufficient—it must be the owner
+
+---
+
+### 2. CIDR Blocks Must NOT Overlap
+- The IP address ranges (CIDR blocks) of the two VPCs:
+  - **Must be unique**
+  - **Cannot overlap**
+
+Why?
+- Routing would be impossible if both VPCs use the same IP ranges
+
+Best practice:
+- **Never reuse the same CIDR block across VPCs**
+- Each VPC should have its own unique IP range
+
+Tip:
+- Track VPC CIDR blocks in a spreadsheet if you manage many VPCs
+
+---
+
+### 3. Peering Request Acceptance
+- Initiator sends the peering request
+- Receiver accepts the request
+- Acceptance must also be done by the **VPC owner**
+
+---
+
+### 4. Route Tables Must Be Updated
+- Each VPC needs:
+  - A route that points to the **peering connection**
+- Peering alone is not enough
+
+Analogy:
+- A WAN link exists, but traffic still needs a **route** to use it
+
+---
+
+### 5. Security Group Rules May Need Changes
+- AWS Security Groups act like **instance-level firewalls**
+- You may need to:
+  - Allow inbound traffic from the peer VPC
+  - Allow outbound traffic to the peer VPC
+
+Without proper rules:
+- Traffic will still be blocked, even if peering exists
+
+---
+
+## Key Takeaways
+- VPC Peering connects **one VPC directly to another**
+- It is similar to a **WAN connection**
+- **Peering is NOT transitive**
+- CIDR blocks **must not overlap**
+- Routes and security group rules **must be configured**
+- Every VPC pair that needs communication must be **explicitly peered**
+
+If you keep these principles in mind, you’ll avoid the most common VPC peering mistakes.
+
+---
+
+# 7. Creating a VPC Peering Connection (Step-by-Step)
+
+## High-Level Process
+Creating a VPC peering connection involves three main steps:
+1. Ensure **both VPCs exist** and have **non-overlapping CIDR blocks**
+2. **Send a peering request** from one VPC (initiator)
+3. **Accept the request** from the other VPC (acceptor)
+
+After peering is established:
+- **Route tables must be updated** on both sides for traffic to flow
+
+---
+
+## Example Setup
+- **Marketing VPC**: `10.11.0.0/16`
+- **Sales VPC**: `10.10.0.0/16`
+
+CIDR blocks are different → peering is allowed.
+
+---
+
+## Step 1: Create the Peering Request
+1. Open **VPC Dashboard**
+2. Go to **Peering Connections**
+3. Click **Create Peering Connection**
+4. Enter a name (e.g., `marketing-sales`)
+5. Select the **Requestor VPC** (initiator): `Marketing`
+6. Select the **Acceptor VPC**: `Sales`
+7. Create the peering connection
+
+Result:
+- Status shows **Pending Acceptance**
+
+> Note: Only the **VPC owner** can initiate and accept peering requests.
+
+---
+
+## Step 2: Accept the Peering Request
+1. Select the peering connection
+2. Go to **Actions → Accept Request**
+3. Confirm acceptance
+
+Result:
+- Peering status becomes **Active**
+
+⚠️ At this point, traffic still will **not** flow.
+
+---
+
+## Step 3: Update Route Tables (Critical Step)
+
+### Why This Is Needed
+Peering is like a **WAN link**:
+- The link can exist
+- But without routes, no traffic uses it
+
+---
+
+### Add Route in Sales VPC
+- Destination: `10.11.0.0/16` (Marketing VPC)
+- Target: `marketing-sales` peering connection
+- Save the route
+
+---
+
+### Add Route in Marketing VPC
+- Destination: `10.10.0.0/16` (Sales VPC)
+- Target: `marketing-sales` peering connection
+- Save the route
+
+Now:
+- Traffic from each VPC knows how to reach the other
+
+---
+
+## Key Takeaways
+- Peering request → acceptance → routing
+- **Peering alone is not enough**
+- Routes must exist in **both VPCs**
+- Think of the peering connection as a **network interface/WAN link**
+- For *N* VPCs to fully communicate, you need:
+
+
+This can quickly become complex to manage.
+
+---
+
+## Alternative: VPC Sharing
+AWS now allows:
+- **Sharing a VPC across accounts** within an AWS Organization
+
+Benefits:
+- Avoids managing many peering connections
+- Simpler architecture for multi-account setups
+
+Peering still works—but **VPC sharing is often the cleaner solution**.
+
+---
