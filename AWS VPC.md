@@ -438,3 +438,250 @@ EIP = stable public identity
 * NAT Gateway vs EIP usage
 
 ---
+
+# 4. Elastic Network Interfaces (ENIs)
+
+## What Is an Elastic Network Interface (ENI)?
+An **Elastic Network Interface (ENI)** is:
+- A **virtual network interface**
+- Attached to an **EC2 instance**
+- Comparable to a **physical network card** in a real server
+
+### Physical vs Cloud Analogy
+| Physical World | AWS Cloud |
+|---------------|-----------|
+| Physical server | EC2 instance |
+| Network Interface Card (NIC) | Elastic Network Interface (ENI) |
+| Plug in another NIC for more connectivity | Attach another ENI |
+
+---
+
+## Scope and Placement
+An ENI:
+- Exists **only within a VPC**
+- Is **associated with a subnet**
+- Is **attached to an EC2 instance**
+- All components (VPC, subnet, ENI, instance) live within the same VPC
+
+---
+
+## Why Use an ENI?
+
+### Dual-Homing
+The primary benefit of ENIs is **dual-homing**.
+
+**Dual-homed device**:
+- A device connected to **multiple networks**
+- Has more than one “home”
+
+Examples:
+- **Internet router**  
+  - One interface to the internet  
+  - One interface to a private network
+- **Firewall**  
+  - One interface on an untrusted network  
+  - One interface on a trusted network
+
+---
+
+## Dual-Homing with ENIs
+By attaching:
+- **One ENI** → one network
+- **Multiple ENIs** → multiple networks
+
+You can:
+- Connect an instance to **multiple subnets**
+- Separate **public-facing** and **private** traffic
+- Assign:
+  - A **public IP** to one ENI
+  - **Private IPs** to others
+
+This allows:
+- Internet access on one interface
+- Internal VPC or subnet access on another
+
+---
+
+## Mental Model: ENI as a Virtual Network Card
+Think of an ENI as:
+
+1. A **virtual network card sitting on a shelf**
+2. You **create it independently**
+3. You **attach it to an instance**
+4. Once attached, you:
+   - Assign IP addresses
+   - Choose the subnet
+   - Enable public or private connectivity
+
+After attachment:
+- The instance is now connected to an **additional network**
+- The ENI itself remains just a **virtual NIC**
+
+---
+
+## Summary
+- **ENI = virtual network card**
+- Exists within a **VPC**
+- Associated with a **subnet**
+- Attached to an **EC2 instance**
+- Enables **dual-homing** and multi-network connectivity
+- Key to advanced networking designs (firewalls, routing, segmentation)
+
+---
+
+# 5. VPC Endpoints (Deep Dive)
+
+## What Is an Endpoint in AWS?
+In AWS, an **endpoint** is:
+- A **connection** that allows a **VPC to access AWS-managed services**
+- Examples: **Amazon S3**, **Glacier**, analytics services, etc.
+
+Key clarification:
+- An AWS endpoint is **NOT** a physical device at the end of a network link.
+- Think of it as a **bridge or connection point** from your **VPC** to **AWS services that live outside the VPC**.
+
+---
+
+## Why Endpoints Matter
+Endpoints allow you to:
+- Access AWS services **without leaving the AWS network**
+- Enforce **fine-grained access control** using endpoint policies
+- Restrict:
+  - Which services are reachable
+  - Who can access those services
+  - What actions they can perform
+
+Different endpoints can:
+- Connect to different services
+- Use different policies
+- Be controlled independently
+
+---
+
+## Mental Model
+- Your **instances live inside a VPC**
+- Many AWS services (S3, Glacier, analytics services) live **outside the VPC**
+- To connect the two securely, you create a **VPC Endpoint**
+- The endpoint acts like a **controlled bridge** between them
+
+---
+
+## Information Required to Create an Endpoint
+To create a VPC endpoint, you must specify:
+
+1. **VPC**
+   - The VPC where the endpoint will live
+
+2. **Service Name**
+   - Defined using DNS format:
+     ```
+     com.amazonaws.<region>.<service>
+     ```
+   - Example:
+     ```
+     com.amazonaws.us-east-1.s3
+     ```
+
+3. **Endpoint Policy**
+   - Controls:
+     - Who (Principal)
+     - Can do what (Actions)
+     - On which resources (Resources)
+
+4. **Route Tables**
+   - Defines how traffic is routed from the subnet to the AWS service
+   - The endpoint automatically inserts the required route entries
+
+---
+
+## Endpoint Creation Process (Console Walkthrough)
+
+### Step 1: Open VPC Console
+- Go to **VPC Management Console**
+- Open the **VPC Dashboard**
+- Select **Endpoints**
+
+---
+
+### Step 2: Create Endpoint
+- Click **Create Endpoint**
+- By default, there are no endpoints unless previously created
+
+---
+
+### Step 3: Choose Service
+You can:
+- Select **AWS services**
+- Search by service name
+- Choose services from **AWS Marketplace**
+
+Example:
+- Select **Amazon S3**
+- This creates a bridge from the VPC to S3
+
+---
+
+### Step 4: Choose the VPC
+- Select the target VPC (e.g., `SALES VPC`)
+- The endpoint will exist inside this VPC
+
+---
+
+### Step 5: Configure Route Tables
+- AWS automatically adds a route like:
+- You simply:
+- Select the appropriate **route table**
+- Important:
+- If you have multiple route tables, ensure you choose the correct one
+- This determines which subnets can reach the service
+
+---
+
+### Step 6: Configure Endpoint Policy
+Options:
+- **Full Access (default)**
+- **Custom Policy**
+
+#### Full Access
+- Allows all users in the VPC full access to the service
+
+#### Custom Policy
+- Uses the **Policy Generator**
+- Define:
+- Service
+- Principals
+- Allowed actions
+- Same structure as IAM policies, but scoped to the endpoint
+
+For this example:
+- Leave policy as **Full Access**
+
+---
+
+### Step 7: Create Endpoint
+- Click **Create Endpoint**
+- Endpoint enters creation process
+- Status changes to **Available**
+
+---
+
+## Viewing the Created Endpoint
+Once created, you can see:
+- **Endpoint ID**
+- **Service Name** (e.g., S3)
+- **Endpoint Type** (e.g., Gateway)
+- **VPC ID**
+- **Associated Route Tables**
+- **Endpoint Policy**
+
+---
+
+## Understanding the Endpoint Policy
+Example policy structure:
+```json
+{
+"Effect": "Allow",
+"Principal": "*",
+"Action": "*",
+"Resource": "*"
+}
