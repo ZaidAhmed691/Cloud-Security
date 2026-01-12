@@ -95,3 +95,78 @@ Example: `m5.2xlarge`
 
 ---
 
+# 2. EC2 Security Groups (Firewalls)
+
+## Overview
+- **Security Groups** act as a **firewall around EC2 instances**
+- Control **inbound (incoming)** and **outbound (outgoing)** traffic
+- Fundamental building block for **network security in AWS**
+- Rules define **what is allowed**, never what is denied
+
+## Key Characteristics
+- Only **ALLOW rules** (no explicit deny rules)
+- Rules can reference:
+  - **IP address ranges** (IPv4 / IPv6)
+  - **Other security groups**
+- Evaluated **outside the EC2 instance**
+  - Blocked traffic never reaches the instance
+
+## Traffic Direction
+- **Inbound rules**
+  - Control traffic from outside → EC2 instance
+- **Outbound rules**
+  - Control traffic from EC2 instance → outside
+- Defaults:
+  - All **inbound traffic blocked**
+  - All **outbound traffic allowed**
+
+## Rule Structure
+- Rule components:
+  - Type (e.g., SSH, HTTP)
+  - Protocol (TCP, etc.)
+  - Port number
+  - Source (IP range or security group)
+- `0.0.0.0/0` means **allow traffic from anywhere**
+
+## Example Behavior
+- If your IP is allowed on port 22 → SSH access works
+- If another IP is not allowed → connection **times out**
+- Timeout = **security group issue**
+- Connection refused = **application issue** (traffic reached instance)
+
+## Security Group Associations
+- One security group can be attached to **multiple EC2 instances**
+- One EC2 instance can have **multiple security groups**
+- Security groups are scoped to a **Region + VPC**
+  - Cannot be reused across regions or VPCs
+
+## Best Practices
+- Keep a **separate security group for SSH access**
+- Makes troubleshooting and access control simpler
+- SSH is usually the most sensitive access point
+
+## Referencing Security Groups
+- Security groups can allow traffic **from other security groups**
+- Enables instance-to-instance communication **without using IPs**
+- Common use case:
+  - Load balancers
+  - Multi-tier architectures
+- Instances with authorized security groups can communicate automatically
+- Instances with unauthorized security groups are blocked
+
+## Common Ports to Know (Exam-Relevant)
+- **22** → SSH (Linux login)
+- **21** → FTP (File Transfer Protocol)
+- **22** → SFTP (Secure File Transfer over SSH)
+- **80** → HTTP (Unsecured web traffic)
+- **443** → HTTPS (Secured web traffic)
+- **3389** → RDP (Windows login)
+
+## Exam Takeaways
+- Security groups are **stateful firewalls**
+- Only allow rules exist
+- Timeout errors usually indicate **security group misconfiguration**
+- Port numbers and their purposes are **highly testable**
+
+---
+
