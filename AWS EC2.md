@@ -170,3 +170,68 @@ Example: `m5.2xlarge`
 
 ---
 
+# 3. EC2 Security Groups – Hands-On Behavior & Troubleshooting
+
+## Viewing Security Groups
+- Security groups attached to an EC2 instance can be viewed from:
+  - EC2 instance → **Security tab**
+  - **Networking & Security → Security Groups** (full view)
+- Each security group has a **unique ID**
+- Common default groups:
+  - **Default security group**
+  - **Launch Wizard security group** (created during instance launch)
+
+## Inbound Rules (Incoming Traffic)
+- Inbound rules control traffic **from outside → EC2**
+- Example rules:
+  - SSH → Port 22 → Source: `0.0.0.0/0` (anywhere)
+  - HTTP → Port 80 → Source: `0.0.0.0/0`
+- Port 80 inbound rule allows access to a web server via the instance’s **public IPv4 address**
+
+## Effect of Removing Inbound Rules
+- Removing HTTP (port 80) rule:
+  - Website becomes inaccessible
+  - Browser keeps loading → **timeout**
+- Adding the rule back restores access immediately
+
+## Timeout vs Connection Refused (Very Important)
+- **Timeout**
+  - 100% indicates a **security group issue**
+  - Traffic is blocked before reaching the instance
+- **Connection refused**
+  - Security group allowed traffic
+  - Application is not running or misconfigured
+
+## Adding Inbound Rules
+- You can allow:
+  - Specific ports (e.g., 80, 443)
+  - Port ranges
+- Rule configuration options:
+  - Select protocol from dropdown (e.g., HTTP, HTTPS)
+  - Allow from:
+    - Anywhere (`0.0.0.0/0`)
+    - Your IP only
+    - CIDR blocks
+    - Other security groups
+- Using **My IP** is safer but risky if your IP changes → results in timeout
+
+## Outbound Rules (Outgoing Traffic)
+- Outbound rules control traffic **from EC2 → outside**
+- Default behavior:
+  - Allow **all IPv4 traffic to anywhere**
+- This enables full internet access from the EC2 instance
+
+## Multiple Security Groups
+- An EC2 instance can have **multiple security groups attached**
+- A security group can be attached to **multiple EC2 instances**
+- Rules from multiple security groups are **combined (additive)**
+
+## Key Takeaways
+- Security groups are the **first place to check** when connectivity fails
+- Timeouts almost always mean **incorrect inbound rules**
+- Inbound rules enable access; outbound rules enable connectivity from the instance
+- Security groups are **reusable and flexible**
+- Changes take effect **immediately**
+
+---
+
