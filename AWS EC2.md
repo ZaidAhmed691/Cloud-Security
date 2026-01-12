@@ -235,3 +235,71 @@ Example: `m5.2xlarge`
 
 ---
 
+# 4. EC2 Instance Connect (Browser-Based SSH)
+
+## Overview
+- **EC2 Instance Connect** is an **alternative to traditional SSH**
+- Provides **browser-based SSH access** to EC2 instances
+- Eliminates the need to manually manage SSH key pairs
+- Commonly used for **quick access and demos**
+
+## How EC2 Instance Connect Works
+- Accessed via:
+  - EC2 Console → Instance → **Connect**
+  - Select **EC2 Instance Connect**
+- AWS automatically:
+  - Uploads a **temporary SSH key**
+  - Establishes an SSH session behind the scenes
+- Uses the default Linux username:
+  - `ec2-user` (for Amazon Linux)
+- Session opens in a **new browser tab**
+
+## Key Benefits
+- No local terminal required
+- No SSH key management
+- Works across Windows, macOS, and Linux
+- Fast and convenient for learning and troubleshooting
+
+## Behind the Scenes
+- EC2 Instance Connect still relies on **SSH**
+- Requires:
+  - **Port 22 open** in the security group
+  - Correct inbound rules for IPv4 and sometimes IPv6
+
+## Security Group Requirements
+- Inbound rule required:
+  - SSH → Port 22
+  - Source:
+    - Anywhere IPv4 (`0.0.0.0/0`)
+    - Sometimes Anywhere IPv6 (`::/0`)
+- If port 22 is closed:
+  - Connection fails immediately
+
+## Troubleshooting Connection Issues
+- Connection failure usually means:
+  - SSH (port 22) is blocked in the security group
+- Fix:
+  - Add SSH inbound rule
+  - Ensure correct IPv4 / IPv6 configuration
+
+## Usage Notes
+- Supports running standard Linux commands:
+  - `whoami`
+  - `ping google.com`
+- Can be used instead of:
+  - Local SSH terminal
+  - PuTTY
+  - OS-specific SSH clients
+
+## Course Context
+- EC2 Instance Connect will be used frequently
+- Whenever SSH is mentioned:
+  - You can use either traditional SSH or EC2 Instance Connect
+
+## Exam Takeaways
+- EC2 Instance Connect = **SSH via AWS Console**
+- Still requires **port 22**
+- Temporary SSH keys are managed by AWS
+- Simplifies access but does not replace SSH concepts
+
+---
