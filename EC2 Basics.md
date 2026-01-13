@@ -521,3 +521,131 @@ Example: `m5.2xlarge`
 
 ---
 
+# 7. EC2 Spot Instances – Deep Dive
+
+## Overview
+- **Spot Instances** provide up to **90% discount** vs On-Demand
+- Ideal for **fault-tolerant, non-critical workloads**
+- AWS can reclaim instances based on **spot price changes**
+
+## How Spot Pricing Works
+- You define a **maximum spot price** you’re willing to pay
+- AWS spot price:
+  - Varies by **supply and demand**
+  - Varies by **Availability Zone**
+- Instance runs as long as:
+  - Current spot price ≤ your max price
+- If spot price exceeds your max price:
+  - Instance may be reclaimed by AWS
+
+## Interruption Behavior
+- AWS provides a **2-minute warning (grace period)**
+- During this time, you can:
+  - **Stop** the instance  
+    - Preserve state (EBS-backed)
+    - Restart when price drops again
+  - **Terminate** the instance  
+    - Start fresh later
+- Choice depends on whether workload state matters
+
+## Spot Blocks
+- Reserve a Spot Instance for **1 to 6 hours**
+- Designed to prevent interruptions during the block window
+- Rare interruptions may still occur
+- Useful for:
+  - Time-bound batch jobs
+  - Predictable short workloads
+
+## When to Use Spot Instances
+- Best for:
+  - Batch processing
+  - Data analysis
+  - Image / video processing
+  - Distributed workloads
+  - Flexible start/end jobs
+- NOT suitable for:
+  - Databases
+  - Critical workloads
+  - Stateful, non-resilient applications
+
+## Spot Price Characteristics
+- Spot prices:
+  - Differ per **Availability Zone**
+  - Can fluctuate over time
+- Often relatively stable
+- Still significantly cheaper than On-Demand
+- If your max price is set **well above** current prices:
+  - Instance is unlikely to be reclaimed
+
+## Spot Requests
+- A Spot Request defines:
+  - Number of instances
+  - Maximum price
+  - Launch specification (AMI, instance type, etc.)
+  - Valid-from / valid-until time
+  - Request type
+
+## Spot Request Types
+- **One-Time**
+  - Instance launches once
+  - Request is removed after fulfillment
+- **Persistent**
+  - AWS maintains desired capacity
+  - If instance is interrupted:
+    - AWS attempts to relaunch automatically
+  - Request remains active until canceled
+
+## Correct Way to Terminate Spot Instances
+- To permanently stop Spot usage:
+  1. **Cancel the Spot Request**
+  2. **Terminate the Spot Instances**
+- If you terminate instances first:
+  - Persistent request will relaunch them automatically
+- This order is **exam-relevant**
+
+## Spot Fleets
+- A **Spot Fleet** manages:
+  - Multiple Spot Instances
+  - Optionally On-Demand Instances
+- Fleet tries to meet:
+  - Target capacity
+  - Budget constraints
+- Uses **multiple launch pools**:
+  - Different instance types
+  - Different AZs
+  - Different OS options
+
+## Spot Fleet Allocation Strategies
+- **Lowest Price**
+  - Launches from cheapest pool
+  - Best for short workloads
+  - Most exam-tested
+- **Diversified**
+  - Spreads instances across pools
+  - Improves availability
+  - Good for long workloads
+- **Capacity Optimized**
+  - Chooses pool with highest available capacity
+- **Price-Capacity Optimized**
+  - Chooses highest-capacity pool
+  - Then selects lowest price
+  - Best general-purpose strategy
+
+## Why Use Spot Fleets
+- More savings than single Spot Instance requests
+- Automatic optimization across:
+  - Instance types
+  - Availability Zones
+- Ideal when:
+  - You need raw compute power
+  - You don’t care about exact instance type
+
+## Exam Takeaways
+- Spot = **cheap but interruptible**
+- Always associate Spot with **fault tolerance**
+- Persistent requests auto-relaunch instances
+- Cancel Spot Requests **before** terminating instances
+- Spot Fleets = **maximum flexibility + maximum savings**
+- Lowest-price strategy is the most common exam answer
+
+---
