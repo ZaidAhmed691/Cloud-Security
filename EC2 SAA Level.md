@@ -250,3 +250,82 @@
   - Spread → availability
   - Partition → scalability + fault isolation
 - Placement groups are easy to configure but powerful in impact
+
+---
+
+# 4. Elastic Network Interfaces (ENI)
+
+## Overview
+- **ENI (Elastic Network Interface)** = virtual network card in a VPC
+- Provides **network connectivity** to EC2 instances
+- Not exclusive to EC2 (used by other AWS services as well)
+- Exists as a **separate logical component** that can be attached/detached
+
+## Core Concepts
+- Each EC2 instance has:
+  - **Primary ENI** (`eth0`) by default
+- ENIs are:
+  - Created **inside a VPC**
+  - **Bound to a specific Availability Zone**
+
+## ENI Attributes
+- Networking:
+  - One **primary private IPv4**
+  - One or more **secondary private IPv4s**
+- Public addressing:
+  - One Elastic IP per private IPv4 (optional)
+  - Or public IPv4 addresses
+- Security:
+  - One or more **security groups**
+- Identity:
+  - MAC address
+- Other metadata (not exam-critical)
+
+## Multiple ENIs per EC2
+- EC2 instances can have:
+  - Multiple ENIs (e.g., `eth0`, `eth1`)
+- Each ENI provides:
+  - Its own private IP(s)
+  - Its own security groups
+- Useful for:
+  - Multi-homed networking
+  - Traffic separation
+  - Advanced architectures
+
+## ENI Lifecycle & Flexibility
+- ENIs can be:
+  - Created **independently** of EC2
+  - Attached **on the fly**
+  - Detached and reattached to another EC2 instance
+- ENIs can be **moved between EC2 instances**
+  - As long as they are in the **same AZ**
+
+## ENIs and Failover
+- ENIs enable **fast failover** scenarios
+- Example:
+  - Application accessed via a **private static IP**
+  - That IP belongs to an ENI
+  - ENI can be detached from Instance A
+  - ENI attached to Instance B
+- Result:
+  - Traffic switches to new instance without IP change
+
+## Availability Zone Constraint
+- ENIs are **AZ-scoped**
+- An ENI created in AZ-A:
+  - Can only be attached to instances in AZ-A
+- Cannot move ENIs across AZs
+
+## Use Cases
+- Failover using static private IPs
+- Multiple security groups per instance
+- Advanced networking setups
+- Decoupling network identity from compute
+
+## Exam Takeaways
+- ENI = virtual network card
+- Primary ENI = `eth0`
+- Supports multiple private IPs
+- Can be detached and reattached
+- Used for **failover**
+- **AZ-bound** (cannot cross AZs)
