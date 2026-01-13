@@ -83,3 +83,114 @@
 
 ---
 
+# 2. EC2 Placement Groups
+
+## Overview
+- **Placement Groups** control how EC2 instances are placed on AWS hardware
+- Used when you need:
+  - High performance networking
+  - Fault isolation
+  - Predictable failure domains
+- You don’t control hardware directly, but you **influence placement strategy**
+
+## Placement Group Strategies
+- AWS provides **three placement group types**:
+  - Cluster
+  - Spread
+  - Partition
+
+---
+
+## Cluster Placement Group
+- Instances are placed **close together**
+- Located within **one Availability Zone**
+- Optimized for:
+  - **Low latency**
+  - **High throughput networking**
+- Supports enhanced networking (up to ~10 Gbps)
+
+### Pros
+- Extremely fast inter-instance communication
+- Ideal for tightly coupled workloads
+
+### Cons
+- **High risk**
+- If the AZ fails, **all instances fail together**
+
+### Use Cases
+- Big data jobs that must finish quickly
+- High-performance computing (HPC)
+- Applications requiring very low latency between instances
+
+---
+
+## Spread Placement Group
+- Instances are placed on **distinct hardware**
+- Can span **multiple Availability Zones**
+- Designed to **minimize correlated failures**
+
+### Key Characteristics
+- Maximum **7 instances per AZ per placement group**
+- Each instance runs on separate hardware
+
+### Pros
+- Strong isolation
+- Reduced risk of simultaneous instance failure
+
+### Cons
+- Hard limit on scale (small groups only)
+
+### Use Cases
+- Critical applications
+- Systems requiring maximum availability
+- Workloads where instance failures must be isolated
+
+---
+
+## Partition Placement Group
+- Instances are grouped into **partitions**
+- Each partition uses **separate hardware racks**
+- Partitions can span **multiple AZs**
+
+### Key Characteristics
+- Up to **7 partitions per AZ**
+- Each partition can contain **many EC2 instances**
+- Supports **hundreds of instances** per placement group
+- Failure of one partition does not affect others
+
+### Pros
+- Scales much larger than Spread
+- Strong fault isolation at rack level
+
+### Cons
+- Application must be **partition-aware**
+
+### Use Cases
+- Large distributed systems
+- Big data and streaming platforms:
+  - Hadoop
+  - HDFS / HBase
+  - Cassandra
+  - Apache Kafka
+
+---
+
+## Partition Awareness
+- Instances can discover their partition using:
+  - **EC2 Metadata Service**
+- Applications use this info to:
+  - Distribute data
+  - Handle failures intelligently
+
+---
+
+## Exam Takeaways
+- Cluster → **performance**, low latency, high risk
+- Spread → **high availability**, small scale
+- Partition → **large scale + fault isolation**
+- Remember:
+  - Spread = max **7 instances per AZ**
+  - Partition = max **7 partitions per AZ**
+- Partition placement groups are common for **big data workloads**
+
+---
