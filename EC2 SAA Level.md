@@ -194,3 +194,59 @@
 - Partition placement groups are common for **big data workloads**
 
 ---
+
+# 3. Placement Groups – Hands-On Practice
+
+## Creating Placement Groups
+- Navigate to:
+  - EC2 → **Network & Security → Placement Groups**
+- Placement groups must be created **before** launching instances
+
+## Cluster Placement Group (High Performance)
+- Name: `my-high-performance-group`
+- Strategy: **Cluster**
+- Purpose:
+  - Place instances close together
+  - Maximize network throughput and minimize latency
+- Use case:
+  - High-performance / tightly coupled workloads
+
+## Spread Placement Group (Critical Applications)
+- Name: `my-critical-group`
+- Strategy: **Spread**
+- Spread level:
+  - **Rack** (default and exam-relevant)
+  - Host (Outposts only, not used here)
+- Purpose:
+  - Distribute instances across distinct hardware
+  - Reduce correlated failures
+- Use case:
+  - Critical, highly available applications
+
+## Partition Placement Group (Distributed Systems)
+- Name: `my-distributed-group`
+- Strategy: **Partition**
+- Number of partitions:
+  - Configurable (e.g., 1–7 per AZ)
+- Purpose:
+  - Spread instances across multiple hardware racks
+  - Enable large-scale fault isolation
+- Use case:
+  - Big data and distributed systems
+
+## Launching EC2 Instances into a Placement Group
+- Click **Launch Instances**
+- Scroll to **Advanced Details**
+- Select the desired **Placement Group name**
+  - Cluster
+  - Spread
+  - Partition
+- Instance will be launched according to the selected strategy
+
+## Key Takeaways
+- Placement group is selected **at launch time**
+- Different placement strategies serve different goals:
+  - Cluster → performance
+  - Spread → availability
+  - Partition → scalability + fault isolation
+- Placement groups are easy to configure but powerful in impact
