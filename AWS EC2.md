@@ -303,3 +303,80 @@ Example: `m5.2xlarge`
 - Simplifies access but does not replace SSH concepts
 
 ---
+
+# 5. IAM Roles for EC2 – Hands-On Usage
+
+## Overview
+- EC2 instances often need to call AWS APIs (via AWS CLI)
+- **Correct and secure way** to provide credentials is using **IAM Roles**
+- **Never** store or configure IAM access keys directly on an EC2 instance
+
+## Connecting to the EC2 Instance
+- Access can be done via:
+  - SSH
+  - EC2 Instance Connect (browser-based)
+- Once connected:
+  - You are in a standard **Linux terminal**
+  - Commands behave the same regardless of connection method
+
+## AWS CLI on EC2
+- Amazon Linux AMI comes with **AWS CLI pre-installed**
+- You can immediately run AWS CLI commands
+- Example:
+  - `aws iam list-users`
+- Without credentials, AWS returns:
+  - **Unable to locate credentials**
+
+## Why NOT `aws configure` on EC2
+- `aws configure` stores:
+  - Access Key ID
+  - Secret Access Key
+- This is **extremely insecure**
+- Anyone with access to the instance can retrieve the credentials
+- **Rule of thumb**:
+  - Never enter IAM access keys on EC2 instances
+
+## Using IAM Roles (Correct Approach)
+- IAM Roles provide **temporary credentials** automatically
+- Credentials are managed securely by AWS
+- No access keys are stored on the instance
+
+## Attaching an IAM Role to EC2
+- Go to:
+  - EC2 → Instances → Actions → Security → Modify IAM role
+- Select an existing IAM role
+- Save changes
+- Role is attached **immediately** to the instance
+
+## Verifying Role Access
+- After attaching the role:
+  - Run AWS CLI commands again
+  - Example:
+    - `aws iam list-users`
+- Command works **without running `aws configure`**
+
+## Permission Enforcement
+- If permissions are removed from the role:
+  - AWS CLI returns **AccessDenied**
+- IAM permissions are enforced **in real time**
+- Policy changes may take a few seconds to propagate
+
+## Key Behavior to Remember
+- IAM role permissions:
+  - Are directly tied to the EC2 instance
+  - Change behavior of AWS CLI commands instantly
+- No credentials are visible or manually managed
+
+## Best Practices
+- Always use **IAM roles** for EC2
+- Assign **least-privilege policies**
+- Never hardcode or configure access keys on instances
+
+## Exam Takeaways
+- EC2 credentials should be provided via **IAM Roles only**
+- `aws configure` on EC2 = **security anti-pattern**
+- IAM roles use **temporary credentials**
+- Permissions can be modified without restarting the instance
+
+---
+
