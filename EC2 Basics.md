@@ -649,3 +649,141 @@ Example: `m5.2xlarge`
 - Lowest-price strategy is the most common exam answer
 
 ---
+
+# 8. EC2 Launch Options – Console & Practical Overview
+
+## Overview
+- EC2 instances can be launched using **multiple purchasing and request models**
+- Each method targets different needs:
+  - Cost optimization
+  - Capacity guarantees
+  - Licensing and compliance
+- Exam focus: **when to use which launch option**
+
+## Spot Requests (Spot Instances & Fleets)
+- Accessible via:
+  - EC2 → **Spot Requests**
+- You can view **Spot Price History**:
+  - Prices vary by:
+    - Instance type
+    - Availability Zone
+    - Time
+  - Spot prices are often **stable and significantly cheaper**
+  - Savings of ~70% or more are common
+
+### Requesting Spot Instances
+- Click **Request Spot Instances**
+- Define launch configuration:
+  - AMI (e.g., Amazon Linux 2)
+  - Key pair
+  - Instance configuration
+- Request details include:
+  - Max spot price
+  - Valid-from / valid-until
+  - Whether instances terminate when request expires
+  - Optional load balancer / target group attachment
+
+### Target Capacity
+- Define capacity as:
+  - Number of instances
+  - vCPUs
+  - Memory (MB)
+- Interruption behavior options:
+  - Terminate
+  - Stop
+  - Hibernate
+- Capacity rebalancing can be enabled
+
+### Instance Selection
+- Two approaches:
+  - Manually select instance types
+  - Define instance attributes:
+    - vCPU min/max
+    - Memory min/max
+- Fewer constraints = more matching instance types
+- More flexibility = better cost savings
+
+### Allocation Strategy
+- Optimize for:
+  - **Lowest price** (maximum savings)
+  - Capacity
+- Diversified strategy spreads instances across pools
+- Fleet summary shows:
+  - Estimated hourly cost
+  - % savings vs On-Demand
+
+## Launching Spot Instances from EC2 Wizard
+- EC2 → Launch Instance
+- Under **Advanced Details**:
+  - Enable Spot Instance
+- Defaults:
+  - Max price capped at On-Demand
+  - One-time request
+- Custom options:
+  - Persistent request
+  - Validity period
+  - Interruption behavior (stop / hibernate)
+- Spot Blocks are deprecated and may not appear
+
+## Reserved Instances (RI)
+- Purchased directly (not launched)
+- Select:
+  - Instance type (e.g., `c5.large`)
+  - Term (1 or 3 years)
+  - Payment option:
+    - All upfront
+    - Partial upfront
+    - No upfront
+  - Standard or Convertible
+- Added to cart and purchased
+- Reserved Instances are increasingly replaced by **Savings Plans**
+
+## Savings Plans
+- Commit to a **fixed $/hour spend**
+- Term:
+  - 1 or 3 years
+- Provides flexibility across:
+  - Instance sizes
+  - AZs
+  - OS
+- Preferred over Reserved Instances for simplicity
+- Recommended by AWS
+
+## Dedicated Hosts
+- Launch or allocate a **physical server**
+- Used mainly for:
+  - Licensing constraints
+  - Compliance requirements
+- Managed via:
+  - Dedicated Host allocation
+  - AWS License Manager
+- Requires:
+  - Instance family
+  - Availability Zone
+- Very expensive
+- Full hardware visibility and control
+
+## Capacity Reservations
+- Reserve **On-Demand capacity** in a specific AZ
+- Guarantees instance availability
+- No cost discount
+- Charged whether instances are used or not
+- Key parameters:
+  - Instance type
+  - AZ
+  - Number of instances
+  - End date (or manual)
+- Can be combined with:
+  - Savings Plans
+  - Regional Reserved Instances (for cost optimization)
+
+## Key Takeaways
+- Spot Requests / Fleets → maximum savings, interruptible
+- Launch Wizard Spot → simple Spot usage
+- Reserved Instances → long-term, fixed configuration
+- Savings Plans → long-term, flexible usage (preferred)
+- Dedicated Hosts → licensing / compliance
+- Capacity Reservations → availability guarantee, no discount
+- Exam questions test **intent and workload fit**, not UI steps
+
+---
