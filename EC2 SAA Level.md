@@ -329,3 +329,89 @@
 - Can be detached and reattached
 - Used for **failover**
 - **AZ-bound** (cannot cross AZs)
+
+---
+
+# 5. Elastic Network Interfaces (ENI) – Hands-On Practice
+
+## Launching Instances
+- Launch **two EC2 instances** (Amazon Linux 2, `t2.micro`)
+- Use an existing security group (e.g., Launch Wizard)
+- After launch:
+  - Each instance automatically gets **one ENI**
+  - ENI includes:
+    - Public IPv4
+    - Private IPv4
+    - Private DNS
+  - ENIs are visible:
+    - EC2 Instance → Networking
+    - EC2 → Network & Security → Network Interfaces
+
+## Viewing Default ENIs
+- Each instance has:
+  - One ENI in **in-use** state
+  - ENI is linked to a specific **instance ID**
+- Default ENIs are created **with the instance**
+
+## Creating a Custom ENI
+- Navigate to:
+  - EC2 → Network & Security → Network Interfaces → Create
+- Configure:
+  - Description (e.g., `demo-eni`)
+  - Subnet (defines the **AZ**)
+  - Private IPv4 (auto-assign or custom)
+  - Security group
+- Result:
+  - New ENI in **available** state
+  - Not attached to any instance yet
+
+## Attaching a Custom ENI
+- Select ENI → **Attach**
+- Choose an EC2 instance in the **same AZ**
+- After attachment:
+  - Instance now has **two ENIs**
+    - Primary ENI (`eth0`) → public + private IP
+    - Secondary ENI (`eth1`) → private IP only
+
+## Why Use Multiple ENIs
+- Gain control over **private IP ownership**
+- Separate network traffic
+- Enable **fast failover**
+- Advanced networking scenarios
+
+## ENI-Based Failover (Demo)
+- Detach the custom ENI from Instance A
+- Attach the same ENI to Instance B
+- Result:
+  - The **private IP moves** with the ENI
+  - Traffic using that private IP now reaches Instance B
+- Useful when:
+  - Both instances run the same application
+  - Access is via a static private IP
+
+## Detaching ENIs
+- ENI can be detached:
+  - Normally
+  - Or using **force detach** if needed
+- ENI must be detached before attaching to another instance
+
+## ENI Lifecycle on Instance Termination
+- Default ENIs (created with instances):
+  - **Deleted automatically** when instance is terminated
+- Manually created ENIs:
+  - **Remain** after instance termination
+  - Must be deleted manually if no longer needed
+
+## Cost Considerations
+- ENIs themselves:
+  - **No additional cost**
+- Charges depend on:
+  - Associated resources (Elastic IPs, data transfer)
+
+## Key Takeaways
+- ENIs can be created independently of EC2
+- ENIs are **AZ-bound**
+- ENIs can be attached, detached, and moved
+- Moving an ENI moves its **private IP**
+- Manually created ENIs persist after instance termination
+- Powerful but **advanced** networking feature
