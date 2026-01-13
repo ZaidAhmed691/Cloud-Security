@@ -380,3 +380,144 @@ Example: `m5.2xlarge`
 
 ---
 
+# 6. EC2 Instance Purchasing Options
+
+## Overview
+- AWS offers multiple **EC2 purchasing options** to optimize **cost vs flexibility**
+- Choice depends on:
+  - Workload duration
+  - Predictability
+  - Fault tolerance
+  - Compliance or licensing needs
+- Exam focuses on **matching the right option to the workload**
+
+## On-Demand Instances
+- Pay for what you use
+- Billing:
+  - Per second (Linux / Windows, after first minute)
+  - Per hour (other OS)
+- No upfront payment
+- No long-term commitment
+- Highest cost
+- Best for:
+  - Short-term workloads
+  - Unpredictable usage
+  - Applications that cannot be interrupted
+
+## Reserved Instances (RI)
+- Up to ~72% discount vs On-Demand
+- Commitment:
+  - 1 year or 3 years
+- Reserve specific attributes:
+  - Instance type
+  - Region
+  - OS
+  - Tenancy
+- Payment options:
+  - No upfront
+  - Partial upfront
+  - All upfront (maximum discount)
+- Scope:
+  - Regional or Zonal (AZ capacity reservation)
+- Best for:
+  - Steady-state workloads
+  - Long-running databases
+- Can be **bought and sold** on the Reserved Instance Marketplace
+
+## Convertible Reserved Instances
+- More flexibility than standard RIs
+- Can change:
+  - Instance family
+  - Instance type
+  - OS
+  - Tenancy
+  - Scope
+- Lower discount than standard RIs (up to ~66%)
+- Best for:
+  - Long-term workloads with changing requirements
+
+## Savings Plans
+- Modern alternative to Reserved Instances
+- Discount up to ~70% (similar to RIs)
+- Commitment:
+  - Spend a fixed **$ per hour** for 1 or 3 years
+- Flexibility:
+  - Instance size
+  - OS
+  - Tenancy
+- Locked to:
+  - Instance family
+  - Region
+- Usage beyond commitment billed at On-Demand rates
+- Best for:
+  - Long-term workloads with variable instance sizes
+
+## Spot Instances
+- Up to ~90% discount vs On-Demand
+- Instances can be **terminated at any time**
+- You set a maximum price
+- Best for:
+  - Batch jobs
+  - Data analysis
+  - Image processing
+  - Distributed workloads
+  - Fault-tolerant jobs
+- NOT suitable for:
+  - Databases
+  - Critical workloads
+- Highly tested in exams
+
+## Dedicated Hosts
+- Entire **physical server** dedicated to you
+- Full control over:
+  - Instance placement
+  - Underlying hardware
+- Supports **Bring Your Own License (BYOL)**
+- Pricing:
+  - On-Demand (per second)
+  - Reserved (1 or 3 years)
+- Most expensive option
+- Best for:
+  - Compliance requirements
+  - Server-bound software licenses
+  - Regulatory constraints
+
+## Dedicated Instances
+- Instances run on **dedicated hardware**
+- Hardware may be shared with other instances **in your account**
+- No control over instance placement
+- Less visibility than Dedicated Hosts
+- Difference from Dedicated Hosts:
+  - Dedicated Host → physical server access
+  - Dedicated Instance → isolated instances only
+
+## Capacity Reservations
+- Reserve **On-Demand capacity** in a specific AZ
+- No time commitment
+- No billing discounts
+- Charged whether instances run or not
+- Guarantees capacity availability
+- Can be combined with:
+  - Regional Reserved Instances
+  - Savings Plans (for cost optimization)
+- Best for:
+  - Short-term, uninterrupted workloads
+  - AZ-specific capacity requirements
+
+## Mental Model (Exam-Friendly)
+- On-Demand → Pay full price, maximum flexibility
+- Reserved → Commit long-term, maximum discount
+- Savings Plan → Commit to spend, flexible usage
+- Spot → Cheapest, interruptible
+- Dedicated Host → Full physical server control
+- Capacity Reservation → Guarantee capacity, no discount
+
+## Exam Takeaways
+- Focus on **workload characteristics**
+- Discounts vs flexibility is the core trade-off
+- Spot ≠ critical workloads
+- Reserved / Savings Plans = long-term usage
+- Capacity Reservation = availability, not savings
+
+---
+
