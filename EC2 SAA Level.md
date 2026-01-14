@@ -486,3 +486,83 @@
 - Root volume must be **encrypted**
 - Faster resume than stop/start
 - Not supported on bare metal instances
+
+---
+
+# 16. EC2 Hibernate – Hands-On Practice
+
+## Launching an EC2 Instance with Hibernate
+- Launch a new EC2 instance:
+  - AMI: Amazon Linux 2
+  - Instance type: `t2.micro`
+  - Key pair: any
+  - Security group: existing (e.g., `launch-wizard-1`)
+- Scroll to **Advanced Details**
+- Enable **Stop–Hibernate behavior**
+
+## Hibernate Prerequisites (Critical)
+- Root volume must:
+  - Be **EBS-backed**
+  - Be **encrypted**
+  - Have enough storage to store **RAM contents**
+- For `t2.micro`:
+  - RAM = 1 GB
+  - Default 8 GB root volume is sufficient
+- Enable encryption:
+  - Use default `aws/ebs` KMS key
+
+## Verifying Hibernate Configuration
+- Instance launches with hibernation enabled
+- Hibernate is now an allowed instance state action
+
+## Connecting to the Instance
+- Connect using **EC2 Instance Connect**
+- Instance behaves like a normal Linux server
+
+## Using `uptime` to Validate Hibernate
+- Run:
+  - `uptime`
+- Purpose:
+  - Shows how long the OS has been running
+- After initial launch:
+  - Uptime starts near `0` and increases normally
+
+## Hibernating the Instance
+- From EC2 console:
+  - Instance state → **Hibernate**
+- What happens:
+  - RAM contents are written to root EBS volume
+  - Instance enters **stopped** state
+  - OS state is preserved
+
+## Restarting After Hibernate
+- Start the instance again
+- Reconnect using EC2 Instance Connect
+- Run:
+  - `uptime`
+
+## Observed Behavior
+- Uptime does **not reset to zero**
+- Uptime continues from before hibernation
+- Confirms:
+  - OS was frozen, not rebooted
+  - RAM state was restored successfully
+
+## Key Differences Demonstrated
+- Stop + Start:
+  - Uptime resets
+  - OS reboots
+- Hibernate + Start:
+  - Uptime continues
+  - OS resumes from previous state
+
+## Cleanup
+- Terminate the EC2 instance after testing
+- Avoid unnecessary charges
+
+## Key Takeaways
+- Hibernate preserves **RAM + OS state**
+- Requires encrypted EBS root volume
+- Faster resume than stop/start
+- `uptime` is a simple way to verify hibernation
+- Useful for apps with long startup times or large in-memory state
