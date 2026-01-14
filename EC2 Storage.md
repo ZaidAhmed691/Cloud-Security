@@ -172,3 +172,66 @@
 - Additional volumes persist unless explicitly deleted
 - Delete-on-termination is **configurable**
 - EBS lifecycle is a **common exam scenario**
+
+---
+
+# 3. EBS Snapshots
+
+## Overview
+- **EBS Snapshots** are **point-in-time backups** of EBS volumes
+- Used for:
+  - Backup
+  - Disaster recovery
+  - Moving data across AZs or Regions
+- Snapshots are stored in **Amazon S3** (managed by AWS)
+
+## Creating Snapshots
+- Snapshot can be taken:
+  - While the volume is attached and in-use
+  - Detaching the volume is **recommended** for consistency
+- Snapshot captures the state of the volume at that moment
+
+## Moving Data Across AZs and Regions
+- EBS volumes are **AZ-bound**
+- Snapshots are **not AZ-bound**
+- Workflow:
+  - Take snapshot of volume in AZ-A
+  - Restore snapshot in AZ-B or another Region
+- This is the **only way** to move EBS data across AZs
+
+## Snapshot Archive Tier
+- Feature: **EBS Snapshot Archive**
+- Moves snapshot to a **low-cost archive tier**
+- Cost savings:
+  - Up to **75% cheaper**
+- Trade-off:
+  - Restore time: **24–72 hours**
+- Best for:
+  - Long-term backups
+  - Rarely accessed snapshots
+
+## Recycle Bin for EBS Snapshots
+- Protects against **accidental deletion**
+- Deleted snapshots go to **Recycle Bin** instead of permanent deletion
+- Retention period:
+  - Configurable from **1 day to 1 year**
+- Allows snapshot recovery during retention window
+
+## Fast Snapshot Restore (FSR)
+- Ensures **fully initialized snapshots**
+- Eliminates:
+  - Latency on first read
+- Useful for:
+  - Large snapshots
+  - Time-sensitive restores
+- Downside:
+  - **Expensive**
+- Use only when fast restore is critical
+
+## Key Takeaways
+- Snapshots are **point-in-time backups**
+- Used to move volumes across AZs / Regions
+- Archive tier = cheaper, slower restore
+- Recycle Bin = safety net for deletion
+- Fast Snapshot Restore = performance boost at higher cost
+- Exam focus is on **use cases**, not pricing details
