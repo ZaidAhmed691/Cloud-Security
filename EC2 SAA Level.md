@@ -418,7 +418,7 @@
 
 ---
 
-# 14. EC2 Hibernate
+# 6. EC2 Hibernate
 
 ## Overview
 - **EC2 Hibernate** preserves the **in-memory (RAM) state** of an instance
