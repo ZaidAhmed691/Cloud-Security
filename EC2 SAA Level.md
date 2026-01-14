@@ -415,3 +415,74 @@
 - Moving an ENI moves its **private IP**
 - Manually created ENIs persist after instance termination
 - Powerful but **advanced** networking feature
+
+---
+
+# 14. EC2 Hibernate
+
+## Overview
+- **EC2 Hibernate** preserves the **in-memory (RAM) state** of an instance
+- Unlike stop/start:
+  - The operating system is **frozen**, not rebooted
+  - Instance resumes **much faster**
+- Ideal when startup time or in-memory state matters
+
+## Instance States Comparison
+- **Stop**
+  - EBS data is preserved
+  - RAM is lost
+  - OS boots again on start
+- **Terminate**
+  - Instance is destroyed
+  - Root volume deleted if configured
+- **Hibernate**
+  - EBS data preserved
+  - **RAM state preserved**
+  - OS does NOT reboot
+
+## How Hibernate Works
+- Instance is running with data in RAM
+- On hibernate:
+  - RAM contents are written to the **root EBS volume**
+  - Instance enters stopping state
+- On start:
+  - RAM is restored from EBS
+  - Instance resumes exactly where it left off
+
+## Requirements for Hibernate
+- Root volume must be:
+  - **EBS-backed**
+  - **Encrypted**
+  - Large enough to store the RAM dump
+- Instance RAM size must be within supported limits
+- Not supported for:
+  - Bare metal instances
+
+## Supported Configurations
+- Works with:
+  - Linux and Windows
+  - On-Demand instances
+  - Reserved Instances
+  - Spot Instances
+- Hibernate duration:
+  - Intended for **short to medium term** (up to ~60 days)
+
+## Use Cases
+- Applications with:
+  - Long initialization times
+  - Large in-memory caches
+  - Long-running processes
+- Need fast resume without reloading state
+- Avoid repeated OS boot and app startup overhead
+
+## Key Benefits
+- Faster startup than stop/start
+- Preserves application and OS state
+- Reduces initialization time and complexity
+
+## Exam Takeaways
+- Hibernate preserves **RAM + EBS**
+- Stop preserves **EBS only**
+- Root volume must be **encrypted**
+- Faster resume than stop/start
+- Not supported on bare metal instances
