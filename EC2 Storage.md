@@ -81,3 +81,94 @@
 - One instance attachment at a time
 - Must provision size & IOPS
 - Delete on termination is configurable
+
+---
+
+# 2. EBS Volumes – Hands-On Attachment & Lifecycle
+
+## Viewing EBS Volumes on an EC2 Instance
+- EC2 → Instance → **Storage** tab
+- Shows:
+  - Root device
+  - Attached block devices
+- Default setup:
+  - One **root EBS volume** (e.g., 8 GB)
+  - Volume status: **in-use**
+  - Attached to the instance
+
+## Accessing the Volumes Console
+- EC2 → **Volumes**
+- Displays:
+  - All EBS volumes
+  - Size, AZ, state (in-use / available)
+  - Attached instance (if any)
+
+## Creating an Additional EBS Volume
+- EC2 → Volumes → **Create Volume**
+- Choose:
+  - Volume type (e.g., `gp2`)
+  - Size (e.g., 2 GB)
+  - **Availability Zone**
+- AZ must match the EC2 instance AZ
+  - Example:
+    - Instance AZ: `eu-west-1b`
+    - Volume AZ must also be `eu-west-1b`
+
+## Attaching an EBS Volume
+- Volume state must be **available**
+- Actions → **Attach volume**
+- Select:
+  - Target EC2 instance
+- After attachment:
+  - Instance now has **multiple block devices**
+  - Verified under EC2 → Storage tab
+
+## Using the New Volume
+- Newly attached volumes:
+  - Are **not formatted**
+  - Are **not mounted**
+- Requires Linux commands to:
+  - Format
+  - Mount
+- This step is **out of scope** for CCP-level knowledge
+
+## AZ Constraint Demonstration
+- Create a volume in a **different AZ** (e.g., `eu-west-1a`)
+- Attempt to attach to instance in `eu-west-1b`
+- Result:
+  - **Attachment fails**
+- Confirms:
+  - EBS volumes are **AZ-bound**
+
+## Deleting EBS Volumes
+- Volumes can be:
+  - Created
+  - Attached
+  - Detached
+  - Deleted
+- All actions take **seconds**
+- Demonstrates elasticity of cloud storage
+
+## Delete on Termination Behavior
+- Found under:
+  - EC2 → Instance → Storage → Block devices
+- Defaults:
+  - **Root volume** → Delete on termination = **Yes**
+  - **Additional volumes** → Delete on termination = **No**
+
+## Instance Termination Effect
+- Terminate EC2 instance:
+  - Root EBS volume is **deleted**
+  - Additional EBS volumes are:
+    - **Detached**
+    - **Preserved**
+- Verified by:
+  - Refreshing Volumes console
+
+## Key Takeaways
+- EBS volumes must be in the **same AZ** as the instance
+- One instance can have **multiple EBS volumes**
+- Root volume is deleted by default on termination
+- Additional volumes persist unless explicitly deleted
+- Delete-on-termination is **configurable**
+- EBS lifecycle is a **common exam scenario**
