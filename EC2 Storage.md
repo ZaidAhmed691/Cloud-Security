@@ -235,3 +235,90 @@
 - Recycle Bin = safety net for deletion
 - Fast Snapshot Restore = performance boost at higher cost
 - Exam focus is on **use cases**, not pricing details
+
+---
+
+# 4. EBS Snapshots – Hands-On & Advanced Features
+
+## Creating an EBS Snapshot
+- From EC2 → **Volumes**
+- Select an EBS volume (e.g., 2 GB `gp2`)
+- Actions → **Create snapshot**
+- Add a description (e.g., `DemoSnapshots`)
+- Snapshot creation is asynchronous
+- Once completed:
+  - Status = **Completed**
+  - Snapshot is fully available
+
+## Viewing Snapshots
+- EC2 → **Snapshots**
+- Displays:
+  - Snapshot ID
+  - Status
+  - Source volume
+  - Size
+  - Region
+
+## Copying Snapshots Across Regions
+- Snapshots can be **copied to another Region**
+- Use case:
+  - Disaster Recovery (DR)
+  - Cross-region backups
+- Workflow:
+  - Snapshot → Actions → **Copy snapshot**
+  - Choose destination Region
+- Enables regional data protection
+
+## Restoring a Volume from a Snapshot
+- Snapshot → Actions → **Create volume from snapshot**
+- Choose:
+  - Volume type (e.g., `gp2`)
+  - Size
+  - **Target Availability Zone** (can differ from original)
+  - Optional encryption and tags
+- Result:
+  - New EBS volume created from snapshot
+  - Confirms snapshots allow **cross-AZ volume recovery**
+
+## Snapshot Storage Tiers
+- Default tier:
+  - **Standard**
+- Optional:
+  - **Archive tier**
+    - Lower cost
+    - Restore time: **24–72 hours**
+- Suitable for long-term backups
+
+## Recycle Bin for EBS Snapshots
+- Protects against **accidental deletion**
+- Requires a **Retention Rule**
+- Steps:
+  - EC2 → Recycle Bin → Create retention rule
+  - Apply to:
+    - EBS Snapshots
+  - Retention:
+    - 1 day to 1 year
+  - Rule lock:
+    - Optional (can prevent deletion of the rule)
+
+## Deleting and Recovering Snapshots
+- Delete a snapshot:
+  - Snapshot is removed from Snapshots list
+- With Recycle Bin enabled:
+  - Snapshot appears in **Recycle Bin → Resources**
+- Recovery:
+  - Select snapshot → **Recover**
+  - Snapshot is restored to EC2 Snapshots
+
+## Key Takeaways
+- Snapshots are **point-in-time backups**
+- Snapshots are **Region-level**, not AZ-bound
+- Can:
+  - Copy snapshots across Regions
+  - Restore volumes into different AZs
+- Archive tier reduces cost with slower restore
+- Recycle Bin provides snapshot recovery
+- Common exam focus:
+  - DR strategy
+  - Cross-AZ migration
+  - Accidental deletion protection
