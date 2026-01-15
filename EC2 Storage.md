@@ -389,3 +389,86 @@
 - AMIs are region-bound but copyable
 - Custom AMIs improve consistency and speed
 - Marketplace AMIs provide ready-made solutions
+
+---
+
+# 6. Amazon Machine Images (AMI) – Hands-On Practice
+
+## Launching an Instance to Create an AMI
+- Launch a new EC2 instance:
+  - AMI: Amazon Linux 2
+  - Instance type: `t2.micro`
+  - Key pair: any
+  - Security group: existing (e.g., `launch-wizard-1`)
+- Configure **User Data**:
+  - Install Apache (`httpd`)
+  - Start the service
+  - **Do NOT create the index file yet**
+- Purpose:
+  - Prepare a base instance with software preinstalled
+
+## Waiting for User Data Execution
+- Instance may show **Running** before setup is complete
+- User Data runs **only on first boot**
+- Apache setup can take 1–2 minutes
+- Once complete:
+  - Access the public IPv4 via HTTP
+  - Default Apache test page confirms installation
+
+## Creating an AMI from the Instance
+- EC2 → Instance → Right-click
+- Image and templates → **Create image**
+- Provide:
+  - Image name (e.g., `demo-image`)
+- Leave default settings
+- Create image:
+  - Instance is snapshotted
+  - EBS snapshots are created automatically
+- AMI status:
+  - Initially **Pending**
+  - Then **Available**
+
+## Launching an Instance from the Custom AMI
+- EC2 → Launch instance
+- Choose **My AMIs**
+- Select the custom AMI (`demo-image`)
+- Configure:
+  - Key pair (optional)
+  - Security group (existing)
+- Add **User Data**:
+  - Only create/update the index file
+  - Do NOT reinstall Apache (already in the AMI)
+
+## Verifying the AMI Benefits
+- Launch instance from AMI
+- Access public IPv4 via browser
+- Result:
+  - Custom webpage loads quickly
+  - No delay for Apache installation
+- Demonstrates:
+  - Faster boot time
+  - Preinstalled software reuse
+
+## Why AMIs Are Powerful
+- Avoid repeated software installation
+- Faster scaling and recovery
+- Consistent environments
+- Ideal for:
+  - Web servers
+  - Security agents
+  - Preconfigured app stacks
+
+## Cleanup
+- Terminate:
+  - Original EC2 instance
+  - Instance launched from AMI
+- AMI remains available for reuse
+
+## Key Takeaways
+- AMIs capture the full instance state
+- User Data runs once, on first boot
+- Custom AMIs significantly reduce startup time
+- AMIs enable repeatable, consistent EC2 deployments
+- Common exam focus:
+  - Faster boot with preinstalled software
+  - Reusability across AZs within a region
