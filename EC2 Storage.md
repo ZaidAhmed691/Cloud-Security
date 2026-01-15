@@ -725,3 +725,68 @@
 - Max 16 instances
 - Requires cluster-aware file system
 - Used for advanced, high-availability workloads
+
+--- 
+
+# 10. EBS Encryption
+
+## Overview
+- **EBS encryption** protects data:
+  - **At rest** on the volume
+  - **In transit** between EC2 and EBS
+  - **In snapshots**
+  - **In volumes created from snapshots**
+- Encryption/decryption is **transparent** and handled by AWS
+
+## Encryption Characteristics
+- Uses **AWS KMS** (AES-256)
+- Minimal to **negligible performance impact**
+- No application changes required
+- Strongly recommended for security best practices
+
+## What Gets Encrypted Automatically
+- Encrypted EBS volume → data at rest encrypted
+- Traffic between EC2 and EBS → encrypted
+- Snapshots of encrypted volumes → encrypted
+- Volumes created from encrypted snapshots → encrypted
+
+## Encrypting an Unencrypted EBS Volume (Standard Method)
+1. Create a **snapshot** of the unencrypted EBS volume
+2. **Copy the snapshot** and enable encryption during the copy
+3. Create a **new EBS volume** from the encrypted snapshot
+4. Attach the encrypted volume to the EC2 instance
+
+## Snapshot Encryption Behavior
+- Snapshot from **unencrypted volume** → unencrypted snapshot
+- Snapshot from **encrypted volume** → encrypted snapshot
+- Copying a snapshot allows you to:
+  - Enable encryption
+  - Choose a KMS key
+
+## Shortcut: Encrypt While Creating Volume
+- From an **unencrypted snapshot**:
+  - Actions → Create volume from snapshot
+  - Enable encryption during volume creation
+- Result:
+  - Encrypted EBS volume without copying snapshot first
+
+## KMS Keys
+- Can use:
+  - Default AWS-managed key
+  - Customer-managed KMS key
+- Selected during:
+  - Snapshot copy
+  - Volume creation
+
+## Cleanup (Best Practice)
+- Delete:
+  - Test snapshots
+  - Test EBS volumes
+- Prevent unnecessary storage charges
+
+## Exam Takeaways
+- Encryption covers **data at rest + in transit**
+- Managed by AWS, minimal performance impact
+- Unencrypted volumes **cannot be encrypted directly**
+- Must use **snapshot → (copy) → encrypted volume**
+- Encryption uses **KMS (AES-256)**
