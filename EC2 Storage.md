@@ -657,3 +657,71 @@
 - HDD volumes are cheap but slow
 - Only SSD volumes can be boot volumes
 - Exam tests **use-case matching**, not metrics
+
+---
+
+# 9. EBS Multi-Attach
+
+## Overview
+- **EBS Multi-Attach** allows a **single EBS volume** to be attached to **multiple EC2 instances at the same time**
+- Provides **simultaneous read and write access**
+- Designed for **high availability and clustered applications**
+
+## Supported Volume Types
+- Multi-Attach is supported **only** for:
+  - `io1`
+  - `io2`
+- Not supported for:
+  - `gp2`, `gp3`
+  - `st1`, `sc1`
+
+## Availability Zone Scope
+- All EC2 instances and the EBS volume must be in the **same Availability Zone**
+- Multi-Attach **does NOT work across AZs**
+
+## Attachment Limits
+- A single EBS volume can be attached to:
+  - **Up to 16 EC2 instances simultaneously**
+- This limit is **exam-relevant**
+
+## Read & Write Behavior
+- All attached instances have:
+  - Full **read and write** permissions
+- AWS does **not** manage file locking for you
+
+## File System Requirement
+- Must use a **cluster-aware file system**
+- Standard file systems (e.g., `ext4`, `xfs`) are **not sufficient**
+- Application or file system must handle:
+  - Concurrent writes
+  - Data consistency
+  - Locking
+
+## Common Use Cases
+- Clustered Linux applications
+- High availability systems
+- Applications that manage concurrent writes
+- Examples:
+  - Distributed databases
+  - Enterprise clustered software (e.g., Teradata)
+
+## What Multi-Attach Is NOT
+- Not a replacement for shared file systems like EFS
+- Not cross-region or cross-AZ storage
+- Not suitable for workloads without concurrency control
+
+## Exam Triggers
+- Keywords:
+  - “Attach one volume to multiple EC2 instances”
+  - “High availability with shared block storage”
+  - “Clustered application”
+- Correct answer points to:
+  - **io1 / io2 with Multi-Attach**
+
+## Key Takeaways
+- Multi-Attach = shared block storage
+- Only for io1 / io2 volumes
+- Same AZ only
+- Max 16 instances
+- Requires cluster-aware file system
+- Used for advanced, high-availability workloads
