@@ -322,3 +322,70 @@
   - DR strategy
   - Cross-AZ migration
   - Accidental deletion protection
+
+---
+
+# 5. Amazon Machine Images (AMI)
+
+## Overview
+- **AMI (Amazon Machine Image)** defines how an EC2 instance is launched
+- It is a **template** containing:
+  - Operating system
+  - Software configuration
+  - Pre-installed packages and tools
+- AMIs enable **faster boot and configuration** since software is prepackaged
+
+## What an AMI Contains
+- Operating system (e.g., Linux, Windows)
+- Installed applications and dependencies
+- Configuration settings
+- Monitoring and agents (if added)
+- Backed by **EBS snapshots** (created automatically)
+
+## Types of AMIs
+- **AWS-provided AMIs**
+  - Public AMIs maintained by AWS
+  - Example: Amazon Linux 2
+- **Custom AMIs**
+  - Built and maintained by you
+  - Optimized for your workloads
+  - Faster and more consistent launches
+- **AWS Marketplace AMIs**
+  - Built and sold by third-party vendors
+  - Often include licensed software
+  - Can save setup and configuration time
+
+## Regional Scope
+- AMIs are **region-specific**
+- You can:
+  - Create an AMI in one region
+  - **Copy the AMI to other regions**
+- Enables global deployment using the same image
+
+## AMI Creation Workflow
+- Launch an EC2 instance
+- Customize it (install software, configure OS)
+- **Stop the instance** (recommended for data integrity)
+- Create an AMI from the instance
+  - AWS creates EBS snapshots automatically
+- Launch new EC2 instances from the AMI
+
+## AMIs and Availability Zones
+- AMIs can be used to launch instances in **any AZ within the same region**
+- Example workflow:
+  - Create instance in `us-east-1a`
+  - Create AMI
+  - Launch identical instance in `us-east-1b`
+
+## Use Cases
+- Faster instance provisioning
+- Consistent environments (dev / test / prod)
+- Disaster recovery and scaling
+- Sharing or selling software via AWS Marketplace
+
+## Key Takeaways
+- AMI = blueprint for EC2 instances
+- Prepackaged software = faster launches
+- AMIs are region-bound but copyable
+- Custom AMIs improve consistency and speed
+- Marketplace AMIs provide ready-made solutions
