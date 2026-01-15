@@ -546,3 +546,114 @@
 - No durability guarantees
 - Best for temporary, high-speed workloads
 - EBS is preferred for persistent storage
+
+---
+
+# 8. EBS Volume Types
+
+## Overview
+- EBS offers **multiple volume types** optimized for different workloads
+- Categories:
+  - **SSD-backed** (performance & latency)
+  - **HDD-backed** (throughput & cost)
+- Exam focus is on **choosing the right volume type**, not memorizing numbers
+
+## Volume Categories
+- **General Purpose SSD**
+  - `gp2`, `gp3`
+- **Provisioned IOPS SSD**
+  - `io1`, `io2 Block Express`
+- **HDD (Throughput / Cold)**
+  - `st1`, `sc1`
+
+## Boot Volume Support
+- Can be used as **root (boot) volumes**:
+  - `gp2`, `gp3`
+  - `io1`, `io2`
+- Cannot be boot volumes:
+  - `st1`, `sc1`
+
+## General Purpose SSD (gp2, gp3)
+- Balanced **price + performance**
+- Low latency
+- Common use cases:
+  - Boot volumes
+  - Dev/Test
+  - Virtual desktops
+  - General workloads
+
+### gp3 (Newer – Recommended)
+- Baseline:
+  - 3,000 IOPS
+  - 125 MB/s throughput
+- Scales independently:
+  - Up to 16,000 IOPS
+  - Up to 1,000 MB/s throughput
+- **IOPS and throughput are independent of size**
+
+### gp2 (Older)
+- IOPS tied to volume size
+- Performance model:
+  - 3 IOPS per GB
+  - Max 16,000 IOPS
+- Small volumes rely on **bursting**
+- To increase IOPS → must increase volume size
+
+## Provisioned IOPS SSD (io1, io2)
+- Designed for **mission-critical workloads**
+- Consistent, predictable performance
+- Common exam trigger:
+  - Databases
+  - Latency-sensitive systems
+  - Sustained high IOPS
+
+### io1
+- Size: 4 GB – 16 TB
+- Provision IOPS independently of size
+- Up to:
+  - ~64,000 IOPS (Nitro-based instances)
+- Supports **EBS Multi-Attach**
+
+### io2 Block Express
+- Highest EBS performance
+- Size: up to 64 TB
+- Sub-millisecond latency
+- Up to:
+  - 256,000 IOPS
+- Very high durability and consistency
+- Supports **EBS Multi-Attach**
+
+## HDD Volumes (st1, sc1)
+- Lower cost
+- Throughput-focused (not IOPS)
+- **Not for boot volumes**
+
+### st1 (Throughput Optimized HDD)
+- Use cases:
+  - Big data
+  - Data warehousing
+  - Log processing
+- High throughput
+- Lower IOPS
+
+### sc1 (Cold HDD)
+- Lowest cost EBS option
+- Use cases:
+  - Infrequently accessed data
+  - Archive-like workloads
+- Lowest performance
+
+## High-Level Decision Guide (Exam-Oriented)
+- **General workloads / boot volume** → `gp3`
+- **Database / critical low latency** → `io1` or `io2`
+- **Very high sustained IOPS** → `io2 Block Express`
+- **High throughput, low cost** → `st1`
+- **Infrequent access, cheapest** → `sc1`
+- **Need >32,000 IOPS** → Nitro + `io1` / `io2`
+
+## Key Takeaways
+- gp3 is preferred over gp2
+- Provisioned IOPS = databases & consistency
+- HDD volumes are cheap but slow
+- Only SSD volumes can be boot volumes
+- Exam tests **use-case matching**, not metrics
