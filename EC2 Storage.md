@@ -472,3 +472,77 @@
 - Common exam focus:
   - Faster boot with preinstalled software
   - Reusability across AZs within a region
+
+---
+
+# 7. EC2 Instance Store (Local Storage)
+
+## Overview
+- **EC2 Instance Store** is **local storage physically attached** to the EC2 host machine
+- Provides **very high I/O performance**
+- Storage is **ephemeral (temporary)**
+
+## What is EC2 Instance Store?
+- Hardware disk attached directly to the physical server
+- Not network-based (unlike EBS)
+- Available only on **specific EC2 instance types**
+- Used when **extreme disk performance** is required
+
+## Key Characteristics
+- **Very high IOPS & throughput**
+  - Millions of IOPS possible
+  - Much faster than EBS
+- **Low latency**
+  - Direct physical connection
+- **Ephemeral storage**
+  - Data is lost if:
+    - Instance is stopped
+    - Instance is terminated
+    - Underlying hardware fails
+
+## Durability & Risk
+- Data is **NOT durable**
+- If the host machine fails:
+  - Data is permanently lost
+- AWS does **not** replicate instance store data
+- You are responsible for:
+  - Backups
+  - Replication
+  - Data recovery strategy
+
+## Comparison with EBS
+- **Instance Store**
+  - Local, physical disk
+  - Extremely high performance
+  - Temporary
+- **EBS**
+  - Network-attached
+  - Durable
+  - Lower performance than instance store
+  - Suitable for long-term storage
+
+## Common Use Cases
+- Cache
+- Buffer storage
+- Temporary files
+- Scratch data
+- High-performance workloads that can tolerate data loss
+
+## What NOT to Use It For
+- Databases requiring durability
+- Long-term data storage
+- Critical application data
+
+## Exam Tip
+- If you see:
+  - **Very high disk performance**
+  - **Local hardware storage**
+  - **Temporary / ephemeral data**
+- Think: **EC2 Instance Store**
+
+## Key Takeaways
+- Instance Store = fastest EC2 storage
+- Data loss on stop/terminate
+- No durability guarantees
+- Best for temporary, high-speed workloads
+- EBS is preferred for persistent storage
