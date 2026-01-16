@@ -790,3 +790,111 @@
 - Unencrypted volumes **cannot be encrypted directly**
 - Must use **snapshot → (copy) → encrypted volume**
 - Encryption uses **KMS (AES-256)**
+
+---
+
+# 11. Amazon EFS (Elastic File System)
+
+## Overview
+- **EFS** is a **managed Network File System (NFS)**
+- Designed to be mounted on **multiple EC2 instances at the same time**
+- EC2 instances can be in **different Availability Zones**
+- Highly available, highly scalable, but **more expensive than EBS**
+  - ~3× the cost of gp2 EBS
+- **Pay-per-use** → no need to provision capacity in advance
+
+## Core Characteristics
+- Shared file system across many EC2 instances
+- Uses **NFS protocol**
+- Controlled via **Security Groups**
+- Automatically scales from GBs to **petabytes**
+- Thousands of concurrent clients supported
+
+## Operating System Support
+- **Linux-only**
+- Not compatible with Windows
+- Uses standard **POSIX file system**
+- Standard Linux file APIs
+
+## Common Use Cases
+- Content management systems (CMS)
+- Web servers
+- Shared data storage
+- WordPress
+- Data sharing between instances
+
+## Availability & Architecture
+- One EFS file system
+- Accessible from:
+  - Multiple EC2 instances
+  - Multiple AZs (Multi-AZ by default)
+- Built for **high availability and durability**
+
+## Performance Modes
+- **General Purpose (default)**
+  - Low latency
+  - Web servers, CMS, user-facing apps
+- **Max I/O**
+  - Higher latency
+  - Higher throughput
+  - Highly parallel workloads
+  - Big data, media processing
+
+## Throughput Modes
+- **Bursting**
+  - Throughput scales with storage size
+  - Good for spiky workloads
+- **Provisioned**
+  - Set throughput independently of storage size
+  - Predictable performance
+- **Elastic**
+  - Automatically scales throughput up/down
+  - Best for unpredictable workloads
+  - Very exam-friendly default choice
+
+## Storage Classes (Cost Optimization)
+- **Standard**
+  - Frequently accessed data
+- **EFS-IA (Infrequent Access)**
+  - Lower storage cost
+  - Retrieval fee
+- **EFS Archive**
+  - Rarely accessed data
+  - Lowest cost tier
+
+## Lifecycle Management
+- Automatically move files between tiers
+- Based on **last access time**
+- Example:
+  - File not accessed for 60 days → move to EFS-IA
+- Enables **up to 90% cost savings**
+
+## One Zone vs Standard
+- **Standard**
+  - Multi-AZ
+  - Production workloads
+  - Highest availability
+- **One Zone**
+  - Single AZ
+  - Cheaper
+  - Dev / test workloads
+  - Supports IA (One Zone-IA)
+
+## Security & Encryption
+- Security Groups control access
+- Supports **encryption at rest** using KMS
+- Data in transit is encrypted
+
+## Exam-Oriented Decision Guide
+- Shared storage across EC2 instances → **EFS**
+- Multi-AZ shared file system → **EFS**
+- Linux-only shared storage → **EFS**
+- Need auto-scaling storage → **EFS**
+- Cheapest shared storage with infrequent access → **EFS-IA / Archive**
+
+## Key Takeaways
+- EFS = managed NFS for Linux
+- Multi-AZ, highly available
+- Auto-scales, pay-per-use
+- Expensive but powerful
+- Ideal for shared, concurrent access workloads
