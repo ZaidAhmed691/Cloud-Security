@@ -898,3 +898,87 @@
 - Auto-scales, pay-per-use
 - Expensive but powerful
 - Ideal for shared, concurrent access workloads
+
+---
+
+# 12. Amazon EFS Hands-On (Mounting Across Multiple EC2 Instances)
+
+## Step 1 — Create EFS File System
+- Go to **EFS → Create File System → Customize**
+- File system type:
+  - Regional (multi-AZ, high availability) ✅
+  - One Zone (cheaper, single AZ, not for prod)
+
+- Enable:
+  - Automatic Backups
+  - Lifecycle Management (30 days → IA, 90 days → Archive, return to Standard on access)
+  - Encryption at rest (KMS)
+
+## Performance Settings
+- Throughput Modes:
+  - Bursting → scales with storage
+  - Provisioned → fixed throughput (paid)
+  - Elastic → auto-scales, pay-per-use ✅ recommended
+
+- Performance Mode:
+  - General Purpose (low latency) ✅
+  - Max I/O (higher latency, big data)
+
+**Best practice / exam default:**  
+Elastic + General Purpose
+
+## Step 2 — Networking Setup
+- Select Default VPC
+- Mount targets auto-created per AZ
+- Create Security Group:
+  - Name: `EFS-demo`
+  - No inbound rules needed manually
+
+## Step 3 — Launch EC2 Instance A (AZ-A)
+- Amazon Linux 2
+- No key pair (use Instance Connect)
+- Select subnet in AZ-A
+- Add EFS under **Advanced → File systems**
+  - Mount path: `/mnt/efs/fs1`
+  - Auto-mount enabled
+
+## Step 4 — Launch EC2 Instance B (AZ-B)
+- Same setup
+- Attach same EFS file system
+- Mount path identical
+
+## What AWS Automatically Does
+- Creates EFS mount target SGs
+- Opens **NFS port 2049**
+- Links EC2 SG ↔ EFS SG
+- Injects mount commands via User Data
+
+## Step 5 — Validate Shared Storage
+### On Instance A
+```bash
+sudo su
+echo "hello world" > /mnt/efs/fs1/hello.txt
+cat /mnt/efs/fs1/hello.txt
+```
+
+### On Instance B
+```bash
+ls /mnt/efs/fs1
+cat /mnt/efs/fs1/hello.txt
+```
+
+✅ Same file visible across both AZs
+
+### Key Learning
+
+- EFS acts like a shared Linux network drive
+- Mounted across multiple EC2 instances
+- Works across multiple AZs
+- Requires NFS (2049) access via SG
+- Auto-scales and pay-per-use
+
+### Cleanup
+
+- Terminate EC2 instances
+- Delete EFS (must confirm using FS ID)
+- Delete auto-created SGs
