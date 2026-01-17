@@ -157,3 +157,60 @@ Client IP passed via headers:
 - Best LB for microservices and containers
 
 ---
+
+# 3. ALB Hands-On with EC2 Target Group
+
+## Launch Backend EC2 Instances
+- Launch 2 Amazon Linux 2 EC2 instances (t2.micro)
+- Use existing security group allowing:
+  - HTTP (80)
+  - SSH (not used here but already allowed)
+- Add user data to install Apache and serve a simple Hello World page
+- Rename instances:
+  - My First Instance
+  - My Second Instance
+- Verify each instance via its public IPv4 → both return Hello World
+
+## Create Application Load Balancer
+- EC2 → Load Balancers → Create
+- Choose **Application Load Balancer**
+- Name: DemoALB
+- Scheme: Internet-facing
+- IP type: IPv4
+- Deploy across all available AZs
+- Create new SG for ALB:
+  - Allow inbound HTTP from anywhere (0.0.0.0/0)
+  - Remove default SG and attach only ALB SG
+
+## Create Target Group
+- Name: demo-tg-alb
+- Target type: Instances
+- Protocol: HTTP / Port 80
+- Health check path: default (/)
+- Register both EC2 instances on port 80
+
+## Attach Target Group to ALB Listener
+- Listener: HTTP : 80
+- Forward traffic to demo-tg-alb
+- Create Load Balancer
+
+## Verify Load Balancing
+- Open ALB DNS name in browser
+- Refresh page repeatedly → traffic alternates between instances
+- Confirms round-robin behavior
+
+## Health Check Demonstration
+- Stop one EC2 instance
+- Target Group marks it **Unhealthy / Unused**
+- ALB automatically routes only to healthy instance
+- Restart stopped instance
+- Health checks pass → ALB resumes sending traffic to both
+
+## Exam Takeaways
+- ALB routes via Target Groups
+- Health checks control traffic flow automatically
+- Users only see ALB DNS, never backend IPs
+- Backend SG must allow traffic from ALB SG only
+- Load balancers improve HA and fault tolerance
+
+---
