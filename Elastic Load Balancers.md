@@ -29,8 +29,6 @@
   - WAF
   - Global Accelerator
 
----
-
 ## Health Checks
 - ELB checks instance health before routing traffic.
 - Configured using:
@@ -39,8 +37,6 @@
   - Path (e.g., `/health`)
 - Instance must return HTTP **200 OK** to be considered healthy.
 - Unhealthy instances receive **no traffic**.
-
----
 
 ## Types of AWS Load Balancers
 
@@ -69,13 +65,9 @@
   - Intrusion detection
   - Deep packet inspection.
 
----
-
 ## Internal vs External LB
 - **Internet-facing** → Public apps  
 - **Internal** → Private apps inside VPC
-
----
 
 ## Security Groups with ELB
 
@@ -89,8 +81,6 @@
 - Source = Security Group ID, not IP range.
 - This ensures instances are protected from direct public access.
 
----
-
 ## Key Exam Takeaways
 - ELB always sits between users and EC2 instances  
 - Health checks determine traffic routing  
@@ -98,3 +88,72 @@
 - ALB = HTTP smart routing  
 - NLB = high performance Layer 4  
 - EC2 SG should reference LB SG (not open to world)
+
+---
+
+# 2. Application Load Balancer (ALB)
+
+## Overview
+- Layer 7 Load Balancer (HTTP/HTTPS only)
+- Routes traffic to **Target Groups**
+- Supports microservices and container-based apps
+- One ALB can serve multiple applications
+
+## Key Features
+- HTTP/2 and WebSocket support
+- Redirect HTTP → HTTPS
+- Advanced routing:
+  - Path-based (`/users`, `/search`)
+  - Host-based (`api.example.com`)
+  - Query string-based (`?Platform=Mobile`)
+  - Header-based routing
+
+## Why ALB Over Classic LB
+- Classic LB = 1 LB per app
+- ALB = many apps behind a single LB
+- Better for modern architectures
+
+## Target Groups
+ALB can route traffic to:
+- EC2 instances
+- Auto Scaling Groups
+- ECS tasks (containers)
+- Lambda functions
+- Private IP addresses (on-prem or inside VPC)
+
+Health checks happen **per target group**, not per instance directly.
+
+## Example Architecture
+- 1 ALB
+- Target Group A → `/users`
+- Target Group B → `/search`
+- ALB rules determine routing based on URL path
+
+## Hybrid Routing Example
+- TG1 → AWS EC2
+- TG2 → On-prem private servers
+- ALB rule:
+  - `?Platform=Mobile` → TG1
+  - `?Platform=Desktop` → TG2
+
+## ALB Networking Behavior
+- Clients connect to ALB public endpoint
+- ALB terminates connection
+- ALB forwards request to EC2 using private IP
+
+Backend instances **do not see real client IP** directly.
+
+Client IP passed via headers:
+- `X-Forwarded-For`
+- `X-Forwarded-Port`
+- `X-Forwarded-Proto`
+
+## Exam Takeaways
+- ALB = Layer 7 only
+- Uses Target Groups
+- Supports advanced routing rules
+- Can route to Lambda + IP targets
+- Client IP preserved only via X-Forwarded headers
+- Best LB for microservices and containers
+
+---
