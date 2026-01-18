@@ -214,3 +214,42 @@ Client IP passed via headers:
 - Load balancers improve HA and fault tolerance
 
 ---
+
+# 4. ALB Advanced Concepts (Security + Listener Rules)
+
+## Restrict EC2 Access to Only the Load Balancer
+- Previously EC2 instances allowed HTTP from anywhere
+- Updated EC2 Security Group inbound rule:
+  - Removed 0.0.0.0/0 HTTP rule
+  - Allowed HTTP only from ALB Security Group
+- Result:
+  - Direct access via EC2 Public IP fails (timeout)
+  - ALB still successfully forwards traffic
+- Purpose:
+  - Force all users to go through the Load Balancer
+  - Improves security and control
+
+## ALB Listener Rules
+- ALB → Listeners → View/Edit Rules
+- Default rule:
+  - All traffic → demo target group
+- Added custom rule:
+  - Condition: Path = `/error`
+  - Action: Return fixed response
+  - Response:
+    - Status: 404
+    - Message: "Not Found – Custom Error"
+  - Priority set to 5 (higher than default)
+
+## Rule Behavior
+- Visiting ALB DNS normally → routes to EC2
+- Visiting ALB DNS + `/error` → returns custom 404 page
+- ALB evaluates rules by priority (lower number = higher priority)
+
+## Exam Takeaways
+- Best practice: EC2 should only allow traffic from ALB SG
+- Listener rules allow routing or fixed responses
+- Path-based routing is a core ALB feature
+- Rules are processed in priority order
+
+---
