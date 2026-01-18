@@ -369,3 +369,58 @@ Result → Targets became **Healthy**
 - Each AZ provides static IP automatically  
 
 ---
+
+# 7. Gateway Load Balancer (GWLB)
+
+## What it is
+- Newest AWS load balancer type  
+- Designed to deploy, scale, and manage **third-party network appliances**  
+- Works as both:
+  - A transparent network gateway
+  - A load balancer for security appliances  
+
+## Why it exists
+Used when **all network traffic must be inspected** before reaching applications, such as:
+
+- Firewalls  
+- Intrusion Detection / Prevention Systems (IDS/IPS)  
+- Deep Packet Inspection  
+- Traffic filtering or modification  
+
+## How it works (Concept)
+
+Normal flow without GWLB:
+- User → ALB → EC2
+
+With GWLB:
+- User traffic → Gateway Load Balancer → Security Appliances → Back to GWLB → Application
+
+Key idea:
+- Traffic is **forced through appliances** using VPC route table updates
+- Appliances inspect traffic and:
+  - Forward back if allowed
+  - Drop if blocked  
+
+Fully transparent to backend apps.
+
+## Technical Layer
+- Operates at **Layer 3 (IP level)**  
+- Uses **GENEVE protocol on port 6081**  
+
+Exam trigger:
+> If you see GENEVE → think GWLB immediately.
+
+## Target Groups for GWLB
+Can register:
+- EC2 instances (security appliances)
+- Private IP addresses (including on-prem appliances)
+
+## Key Exam Takeaways
+- Used for centralized traffic inspection
+- Combines routing + load balancing for appliances
+- Layer 3 only
+- Requires route table changes
+- Protocol = GENEVE (6081)
+- No hands-on expected in exam, concept only  
+
+---
