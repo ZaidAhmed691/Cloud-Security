@@ -253,3 +253,53 @@ Client IP passed via headers:
 - Rules are processed in priority order
 
 ---
+
+# 5. Network Load Balancer (NLB)
+
+## Overview
+- Layer 4 Load Balancer
+- Supports:
+  - TCP
+  - UDP
+  - TLS over TCP
+- Used for extreme performance workloads
+- Handles millions of requests per second
+- Ultra-low latency
+
+## Static IP Feature
+- NLB provides **one static IP per Availability Zone**
+- Can associate an Elastic IP per AZ
+- Useful when:
+  - Clients must whitelist fixed IPs
+  - Regulatory/network restrictions require static endpoints
+- Exam keyword: **Static IP → NLB**
+
+## How NLB Routes Traffic
+- Uses Target Groups like ALB
+- Traffic forwarded at TCP/UDP level (no HTTP awareness)
+
+## Target Groups Supported
+- EC2 Instances
+- Private IP Addresses
+  - Can include:
+    - EC2 private IPs
+    - On-prem servers (via VPN/Direct Connect)
+- Can place NLB **in front of an ALB**
+  - NLB = static IP entry point
+  - ALB = HTTP routing intelligence
+
+## Health Checks
+NLB supports:
+- TCP
+- HTTP
+- HTTPS
+
+(If backend app exposes HTTP/HTTPS health endpoints, NLB can use them)
+
+## Exam Takeaways
+- UDP traffic always uses NLB
+- Need ultra-high performance → NLB
+- Need static IP for LB → NLB
+- Can combine NLB + ALB for static IP + HTTP routing
+
+---
