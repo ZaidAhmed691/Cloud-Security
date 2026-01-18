@@ -424,3 +424,62 @@ Can register:
 - No hands-on expected in exam, concept only  
 
 ---
+
+# 8. Sticky Sessions (Session Affinity)
+
+## What Sticky Sessions Are
+- Ensures a client is always routed to the **same backend instance**
+- Achieved using cookies managed by the load balancer or the application
+- Normally, load balancers distribute each request independently across targets  
+- With stickiness enabled → repeated requests from a client go to the same instance
+
+## Why Use Sticky Sessions
+- Preserves session data (login state, carts, user context)
+- Important for stateful applications
+
+⚠ Downside:
+- Can create uneven load if some users remain tied to one instance for long periods
+
+## Supported Load Balancers
+- Classic Load Balancer (CLB)
+- Application Load Balancer (ALB)
+- Network Load Balancer (NLB)
+
+## How Stickiness Works
+- Load balancer sends a cookie to the client
+- Client includes cookie in future requests
+- LB reads cookie and routes request to the same instance
+- When cookie expires → client may be routed elsewhere
+
+## Cookie Types
+
+### 1) Duration-Based Cookies (LB generated)
+- Managed fully by the Load Balancer
+- ALB cookie name: `AWSALB`
+- CLB cookie name: `AWSELB`
+- Expiration defined at target group level (1 second → 7 days)
+
+### 2) Application-Based Cookies
+- Cookie created by the backend application
+- You define the cookie name per target group
+- Cannot use reserved names:
+  - AWSALB  
+  - AWSALBAPP  
+  - AWSALBTG  
+
+Load balancer still tracks and enforces affinity using that custom cookie.
+
+## Demo Outcome (Concept)
+- Before enabling stickiness → refresh cycles across instances
+- After enabling → repeated refresh returns same backend instance
+- Cookie visible in browser dev tools under request/response headers
+
+## Exam Takeaways
+- Sticky sessions = session affinity
+- Implemented via cookies
+- Used for session persistence
+- Works with CLB, ALB, NLB
+- May cause imbalance across instances
+- Two cookie methods: duration-based & application-based
+
+---
