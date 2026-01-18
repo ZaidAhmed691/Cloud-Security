@@ -303,3 +303,69 @@ NLB supports:
 - Can combine NLB + ALB for static IP + HTTP routing
 
 ---
+
+# 6. Network Load Balancer — Hands-On Summary
+
+## Goal
+Create an internet-facing NLB and route traffic to two EC2 instances.
+
+## Steps Performed
+
+### 1. Create Network Load Balancer
+- Name: DemoNLB  
+- Scheme: Internet-facing  
+- IP type: IPv4  
+- Enabled all AZs → AWS assigned **static IP per AZ**  
+- Attached Security Group: demo-sg-nlb  
+  - Allowed inbound TCP 80 from anywhere  
+
+### 2. Create Target Group (for NLB)
+- Target type: Instances  
+- Name: demo-tg-nlb  
+- Protocol: TCP  
+- Port: 80  
+- Health check protocol: HTTP  
+- Registered both EC2 instances  
+
+### 3. Attach Target Group to Listener
+- Listener: TCP : 80  
+- Forward to demo-tg-nlb  
+
+---
+
+## Issue Faced
+Targets showed **Unhealthy**
+
+### Root Cause
+EC2 Security Group only allowed traffic from ALB SG, not from NLB.
+
+### Fix Applied
+Updated EC2 Security Group:
+- Added inbound HTTP rule  
+- Source = demo-sg-nlb (NLB Security Group)
+
+Result → Targets became **Healthy**
+
+---
+
+## Validation
+- Accessed NLB DNS  
+- Refreshed page multiple times  
+- Response alternated between instance IPs → confirms load balancing  
+
+---
+
+## Cleanup
+- Deleted DemoNLB  
+- Deleted demo-tg-nlb  
+- Optional: removed demo-sg-nlb  
+
+---
+
+## Exam Takeaways
+- NLB requires EC2 SG to explicitly allow traffic from NLB SG  
+- Health checks fail if backend SG blocks LB  
+- NLB works at TCP level (no HTTP routing awareness)  
+- Each AZ provides static IP automatically  
+
+---
