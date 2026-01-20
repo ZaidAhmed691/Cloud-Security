@@ -693,3 +693,59 @@ Imported certificates get stored in ACM.
 - Security policy controls TLS compatibility  
 
 ---
+
+# 12. Connection Draining / Deregistration Delay
+
+## What it is
+Connection Draining (CLB) / Deregistration Delay (ALB & NLB) allows existing user requests to finish before an instance is removed from the load balancer.
+
+When enabled:
+- ELB stops sending **new traffic** to the instance
+- Existing connections are allowed to complete
+- After timeout expires → instance is fully removed
+
+## Naming Differences
+- Classic Load Balancer → **Connection Draining**
+- Application Load Balancer → **Deregistration Delay**
+- Network Load Balancer → **Deregistration Delay**
+
+Same behavior, different names.
+
+## How it Works
+1. Instance marked unhealthy or manually deregistered  
+2. ELB stops routing new requests to it  
+3. Active sessions continue running  
+4. Timeout ends → connections closed safely  
+
+## Timeout Range
+- Minimum: 1 second  
+- Maximum: 3600 seconds  
+- Default: 300 seconds (5 minutes)  
+- Set to 0 → disables draining (immediate cut)
+
+## When to Use Short vs Long Delay
+
+### Short Delay (e.g., 30s)
+Use when:
+- Requests are fast
+- Stateless applications
+- Quick scale-in or replacement needed
+
+### Long Delay (e.g., 300–3600s)
+Use when:
+- File uploads
+- Long API calls
+- Session-sensitive workloads
+
+Trade-off:
+- Safer user experience
+- Slower instance shutdown
+
+## Exam Takeaways
+- Protects in-flight requests  
+- Prevents user disruption  
+- CLB term = Connection Draining  
+- ALB/NLB term = Deregistration Delay  
+- Default always 300s unless changed  
+
+---
