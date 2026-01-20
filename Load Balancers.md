@@ -544,3 +544,97 @@ Result:
 - CLB OFF by default but no charge when enabled  
 
 ---
+
+# 10. SSL / TLS and SNI with Load Balancers
+
+## What is SSL / TLS?
+- SSL = Secure Sockets Layer (old term)  
+- TLS = Transport Layer Security (modern, actual protocol)  
+- Used to encrypt traffic **in-transit** between client and server  
+- Provides secure HTTPS communication  
+
+Even though TLS is correct, everyone still says "SSL".
+
+## Why SSL Certificates Matter
+- Encrypt data between users and Load Balancer  
+- Prevent interception (MITM attacks)  
+- Required for secure websites (lock icon in browser)  
+- Certificates have expiration dates and must be renewed  
+
+Issued by Certificate Authorities:
+- DigiCert  
+- GlobalSign  
+- GoDaddy  
+- Let’s Encrypt  
+- Comodo  
+- Symantec  
+
+## SSL Termination at Load Balancer
+Flow:
+1. Client → HTTPS (encrypted) → Load Balancer  
+2. Load Balancer decrypts traffic (SSL termination)  
+3. Load Balancer → HTTP (unencrypted, private VPC) → EC2  
+
+Why?
+- Saves CPU on backend servers  
+- Centralized certificate management  
+
+Certificates in AWS are managed using:
+**ACM — AWS Certificate Manager**
+
+You can:
+- Use AWS-provided certs  
+- Upload your own certs  
+
+## SNI — Server Name Indication
+
+### The Problem SNI Solves
+Normally:
+- One server = One SSL certificate = One domain  
+
+But what if:
+- One Load Balancer hosts multiple domains?  
+
+SNI allows the client to tell the server which hostname it wants during the TLS handshake so the server can return the correct certificate.
+
+## SNI Support in AWS
+Works with:
+- Application Load Balancer (ALB)  
+- Network Load Balancer (NLB)  
+- CloudFront  
+
+Does NOT work with:
+- Classic Load Balancer (CLB)
+
+## How SNI Works with ALB
+ALB can store multiple SSL certs:
+
+| Domain | Certificate | Target Group |
+|--------|------------|--------------|
+| www.mycorp.com | Cert A | TG-A |
+| domain1.example.com | Cert B | TG-B |
+
+Client connects and sends hostname via SNI → ALB selects correct cert → routes to correct TG.
+
+## SSL Certificate Support Per LB
+
+### Classic Load Balancer
+- Only ONE SSL certificate per LB  
+- Multiple domains require multiple CLBs  
+
+### Application Load Balancer
+- Multiple SSL certs supported  
+- Uses SNI  
+
+### Network Load Balancer
+- Multiple SSL certs supported  
+- Uses SNI  
+
+## Exam Takeaways
+- SSL/TLS = encrypt in transit  
+- ACM manages certificates  
+- ALB & NLB support multiple certs via SNI  
+- CLB supports only one cert  
+- SNI required when multiple domains share one LB  
+
+---
