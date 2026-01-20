@@ -513,6 +513,7 @@ Traffic flow:
 - Client sends 50% traffic to AZ-B LB → split between 8 instances → ~6.25% each  
 
 Result:
+
 ❌ Instances in AZ-A overloaded  
 ❌ Uneven utilization across AZs  
 
