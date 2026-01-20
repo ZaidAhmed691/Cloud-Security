@@ -483,3 +483,63 @@ Load balancer still tracks and enforces affinity using that custom cookie.
 - Two cookie methods: duration-based & application-based
 
 ---
+
+# 9. Cross-Zone Load Balancing
+
+## What It Means
+Cross-zone load balancing allows each load balancer node to distribute traffic across **all registered instances in all Availability Zones**, instead of only routing to targets within its own AZ.
+
+## Scenario With Cross-Zone Enabled
+- 2 AZs  
+- AZ-A → 2 EC2 instances  
+- AZ-B → 8 EC2 instances  
+- Total instances = 10  
+
+Traffic flow:
+- Client sends 50% to LB node in AZ-A  
+- Client sends 50% to LB node in AZ-B  
+- EACH LB node distributes traffic evenly across ALL 10 instances  
+- Every instance receives ~10% total traffic  
+
+Result:
+✔ Even distribution  
+✔ No AZ imbalance impact  
+
+## Scenario Without Cross-Zone
+Traffic is restricted per AZ.
+
+Traffic flow:
+- Client sends 50% traffic to AZ-A LB → split between 2 instances → 25% each  
+- Client sends 50% traffic to AZ-B LB → split between 8 instances → ~6.25% each  
+
+Result:
+❌ Instances in AZ-A overloaded  
+❌ Uneven utilization across AZs  
+
+## Default Behavior Per Load Balancer
+
+### Application Load Balancer (ALB)
+- Cross-zone: **Enabled by default**
+- No inter-AZ data charges
+- Can only disable at Target Group level
+
+### Network Load Balancer (NLB)
+- Cross-zone: Disabled by default
+- Enabling causes inter-AZ data charges
+
+### Gateway Load Balancer (GWLB)
+- Cross-zone: Disabled by default
+- Enabling causes inter-AZ data charges
+
+### Classic Load Balancer (CLB)
+- Disabled by default
+- Enabling does NOT incur inter-AZ charges
+
+## Key Exam Takeaways
+- Cross-zone = distributes across ALL AZ targets  
+- Prevents imbalance when AZs have unequal instance counts  
+- ALB always ON by default  
+- NLB/GWLB OFF by default + charges when enabled  
+- CLB OFF by default but no charge when enabled  
+
+---
