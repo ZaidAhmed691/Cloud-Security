@@ -638,3 +638,58 @@ Client connects and sends hostname via SNI → ALB selects correct cert → rout
 - SNI required when multiple domains share one LB  
 
 ---
+
+# 11. Enabling SSL/TLS on ALB and NLB
+
+## SSL on Application Load Balancer (ALB)
+
+### Add HTTPS Listener
+- Protocol: HTTPS  
+- Port: 443 (default)  
+- Action: Forward traffic to a target group  
+
+### Security Policy
+- Controls TLS versions and ciphers allowed  
+- Used for compatibility with older clients  
+- Default policy is fine for most use cases  
+
+### Certificate Source Options
+You must attach an SSL/TLS certificate:
+
+- From **ACM (recommended)**  
+- From **IAM (legacy / not recommended)**  
+- Import manually:
+  - Private key  
+  - Certificate body  
+  - Certificate chain  
+
+Imported certificates get stored in ACM.
+
+## SSL on Network Load Balancer (NLB)
+
+### Add TLS Listener
+- Protocol: TLS  
+- Port: 443 (typical)  
+- Action: Forward to target group  
+
+### Security Policy
+- Choose TLS negotiation policy  
+
+### Certificate Source
+- ACM (recommended)  
+- IAM (legacy)  
+- Manual Import  
+
+### Advanced Setting
+- ALPN (Application Layer Protocol Negotiation) supported  
+- Used for protocol selection like HTTP/2  
+
+## Exam Takeaways
+- HTTPS Listener = ALB  
+- TLS Listener = NLB  
+- Certificates should come from ACM  
+- IAM certs = legacy only  
+- ALB & NLB both support SSL termination  
+- Security policy controls TLS compatibility  
+
+---
