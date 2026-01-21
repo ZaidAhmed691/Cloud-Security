@@ -222,8 +222,6 @@ If instances keep terminating:
 
 Auto Scaling Groups (ASGs) support **multiple scaling strategies** depending on how predictable and dynamic your workload is.
 
----
-
 ## Dynamic Scaling
 
 Dynamic scaling reacts **automatically** to changes in load.
@@ -344,5 +342,176 @@ Prevents:
 - **Predictive Scaling** → recurring patterns
 - Cooldown prevents instability
 - Metrics choice depends on workload
+
+---
+
+# 4. Auto Scaling Group – Automatic Scaling Policies (Hands-On)
+
+In this section, we look at **automatic scaling** for an Auto Scaling Group (ASG).
+
+There are **three categories** of automatic scaling:
+- Dynamic scaling policies
+- Predictive scaling policies
+- Scheduled actions
+
+## Scheduled Actions
+
+Scheduled actions allow you to **scale at a specific time in the future**.
+
+You define:
+- Desired capacity, minimum, or maximum
+- Frequency (once, daily, weekly, cron-style)
+- Start time and optional end time
+
+**Use cases:**
+- Planned marketing campaigns
+- Known traffic spikes (e.g., Friday evenings)
+- Batch jobs or seasonal workloads
+
+This is useful when traffic patterns are **predictable in advance**.
+
+## Predictive Scaling Policies
+
+Predictive scaling is **machine-learning driven**.
+
+How it works:
+- AWS analyzes **historical usage**
+- Creates a **forecast**
+- Automatically schedules scaling actions ahead of time
+
+You configure:
+- A metric (CPU, Network In/Out, ALB request count, or custom metric)
+- A target utilization (e.g., 50% CPU)
+
+AWS then:
+- Learns usage patterns
+- Scales ahead of demand
+
+This cannot be easily demoed in real time because it requires **days or weeks of historical data**.
+
+## Dynamic Scaling Policies
+
+Dynamic scaling reacts **in real time**.
+
+There are three types:
+- Simple scaling
+- Step scaling
+- Target tracking (recommended)
+
+### Simple Scaling
+
+Simple scaling relies on **CloudWatch alarms**.
+
+You define:
+- An alarm (e.g., CPU > 70%)
+- A scaling action (add/remove capacity)
+
+Examples:
+- CPU > 70% → add 2 instances
+- CPU < 30% → remove 1 instance
+
+Alarms must be created **manually** beforehand.
+
+### Step Scaling
+
+Step scaling allows **multiple scaling steps** based on how far a metric breaches a threshold.
+
+Example:
+- CPU > 60% → add 1 instance
+- CPU > 80% → add 3 instances
+
+More control than simple scaling, but more complex.
+
+### Target Tracking Scaling (Recommended)
+
+Target tracking is the **simplest and most powerful** option.
+
+You define:
+- A metric (e.g., Average CPU Utilization)
+- A target value (e.g., 40%)
+
+AWS automatically:
+- Creates CloudWatch alarms
+- Scales in and out to maintain the target
+
+Example:
+- Target CPU = 40%
+- If CPU > 40% → scale out
+- If CPU < target → scale in
+
+## Target Tracking Demo (CPU Stress Test)
+
+To demonstrate target tracking:
+
+1. Set ASG:
+   - Min capacity = 1
+   - Desired capacity = 1
+   - Max capacity = 2 or 3
+
+2. Create a target tracking policy:
+   - Metric: Average CPU Utilization
+   - Target value: 40%
+
+3. Connect to the EC2 instance
+4. Install stress tool:
+   ```bash
+   sudo amazon-linux-extras install epel -y
+   sudo yum install stress -y
+   ```
+5. Run CPU stress:
+   ```bash
+   stress -c 4
+   ```
+
+This forces CPU utilization near 100%.
+
+## Observing the Scaling Action
+
+Results:
+- CloudWatch detects high CPU
+- Alarm enters **ALARM** state
+- ASG scales out (adds instances)
+
+You can observe:
+- Activity history → instance launch events
+- Instance management → new instances appear
+- Monitoring → CPU spikes visible
+
+## CloudWatch Alarms Created Automatically
+
+Target tracking creates **two alarms automatically**:
+- **High alarm** → scale out
+- **Low alarm** → scale in
+
+Example:
+- CPU > 40% for 3 datapoints → scale out
+- CPU < ~28% for 15 datapoints → scale in
+
+These alarms are visible in **CloudWatch → Alarms**.
+
+## Scaling In (Scale Down)
+
+When CPU load drops:
+- Stress process stops
+- CPU utilization decreases
+- Low alarm triggers
+- ASG terminates instances gradually
+
+Scaling happens **one step at a time**, respecting cooldowns.
+
+## Key Takeaways
+
+- Target tracking is the **recommended default**
+- AWS automatically manages alarms
+- Scaling reacts smoothly to load changes
+- Cooldown periods prevent flapping
+- Works best with fast-booting AMIs
+
+## Cleanup
+
+After testing:
+- Delete the scaling policy
+- Reduce ASG capacity
+- Terminate remaining instances
 
 ---
