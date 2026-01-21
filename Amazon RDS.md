@@ -141,3 +141,151 @@ RDS removes operational overhead:
 - **“Single endpoint” → Multi-AZ**
 
 ---
+
+# 3. Creating an Amazon RDS Database (What You Actually Need to Know)
+
+## Database Creation Basics
+- RDS is created via **Standard Create** or **Easy Create**
+- **Standard Create** exposes all options → preferred for exam understanding
+- Supported engines:
+  - MySQL
+  - PostgreSQL
+  - MariaDB
+  - Oracle
+  - SQL Server
+  - Aurora (AWS proprietary, covered separately)
+
+## Engine & Templates
+- Engine choice impacts:
+  - Licensing
+  - Features (IAM auth, Multi-AZ behavior, replicas)
+- Templates:
+  - **Free Tier** → auto-restricts options
+  - **Dev/Test**
+  - **Production** → full control (used for learning)
+
+Exam tip:
+- Template choice **does not change capabilities**, only defaults
+
+## Availability & Durability
+- **Single-AZ**
+  - Cheapest
+  - No automatic failover
+- **Multi-AZ**
+  - Synchronous standby
+  - Automatic failover
+- **Multi-AZ Cluster**
+  - Newer architecture (Aurora-like)
+
+Exam signal:
+- “High availability / failover” → **Multi-AZ**
+
+## Instance Configuration
+- Instance class defines **CPU & memory**
+- Categories:
+  - Burstable (t3 / t4g)
+  - Standard
+  - Memory optimized
+- Free tier commonly uses:
+  - `db.t3.micro`
+
+Exam tip:
+- Vertical scaling = change instance class
+
+## Storage Configuration
+- Storage types:
+  - gp2 / gp3 → general purpose
+  - io1 / io2 → high IOPS (production)
+- Storage Auto Scaling:
+  - Automatically increases storage
+  - Triggered when:
+    - <10% free space
+    - Sustained for ~5 minutes
+    - 6 hours since last resize
+- Requires setting **maximum storage limit**
+
+Exam signal:
+- “Unpredictable storage growth” → **Enable storage autoscaling**
+
+## Networking & Connectivity
+- RDS runs **inside a VPC**
+- Options:
+  - Connect to EC2 automatically (AWS manages SG rules)
+  - Manual VPC + subnet group + security groups
+- Public access:
+  - **Yes** → accessible from internet (labs/testing)
+  - **No** → private access only (production)
+
+Exam tip:
+- Production databases are usually **NOT publicly accessible**
+
+## Security Groups
+- Database port must be allowed:
+  - MySQL → 3306
+  - PostgreSQL → 5432
+- Best practice:
+  - Allow inbound **only from app security groups**
+- For labs:
+  - Allow from your IP for testing
+
+Exam signal:
+- “Cannot connect to RDS” → check **security group & public access**
+
+## Authentication Methods
+- Username & password (default)
+- IAM Database Authentication
+- Kerberos (enterprise use)
+
+Exam tip:
+- IAM auth removes need for DB passwords in apps
+
+## Backups & Maintenance
+- Automated backups:
+  - Retention: 1–35 days
+  - Enables **Point-in-Time Restore**
+- Backup window & maintenance window:
+  - Can be defined or left to AWS
+- Deletion protection:
+  - Prevents accidental deletion
+
+Exam signal:
+- “Restore to a specific time” → **Automated backups enabled**
+
+## Monitoring
+- Built-in CloudWatch metrics:
+  - CPU utilization
+  - Database connections
+  - Read/write latency
+- Enhanced monitoring:
+  - OS-level metrics
+  - Higher granularity
+
+Exam tip:
+- Monitoring does **not** require installing agents
+
+## Read Replicas & Snapshots
+- Read replicas:
+  - Created from existing DB
+  - Used for read scaling
+- Snapshots:
+  - Manual or automated
+  - Can be copied cross-region
+  - Used for backup & migration
+
+Exam signal:
+- “Analytics workload impacting production DB” → **Read Replica**
+
+## Deletion Workflow (Common Lab Gotcha)
+- Must disable **Deletion Protection**
+- Optional final snapshot
+- Deletion is irreversible
+
+## What the Exam Cares About (Summary)
+- Single-AZ vs Multi-AZ
+- Read Replicas vs Multi-AZ
+- Storage autoscaling behavior
+- Public vs private access
+- Backup retention & PITR
+- Security group access patterns
+
+---
