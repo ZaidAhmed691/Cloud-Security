@@ -1,4 +1,4 @@
-# 1. Amazon RDS – Summary Notes
+# 1. Amazon RDS
 
 ## What is RDS?
 - **Amazon RDS (Relational Database Service)** is a **managed SQL database service**
