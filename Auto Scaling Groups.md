@@ -215,3 +215,134 @@ If instances keep terminating:
 - ASG + ALB = automated, self-healing infrastructure
 - Manual scaling demonstrates core ASG behavior
 - Automatic scaling policies build on this foundation
+
+---
+
+# 3. Auto Scaling Group – Scaling Policies
+
+Auto Scaling Groups (ASGs) support **multiple scaling strategies** depending on how predictable and dynamic your workload is.
+
+---
+
+## Dynamic Scaling
+
+Dynamic scaling reacts **automatically** to changes in load.
+
+### 1. Target Tracking Scaling
+- **Simplest to configure**
+- You define:
+  - A **metric** (e.g. CPU Utilization)
+  - A **target value** (e.g. 40%)
+- The ASG automatically:
+  - **Scales out** when metric goes above target
+  - **Scales in** when metric goes below target
+
+**Example:**
+- Metric: Average CPU Utilization
+- Target: 40%
+- ASG keeps CPU close to 40% by adding or removing instances
+
+### 2. Simple / Step Scaling
+- Based on **CloudWatch alarms**
+- You explicitly define:
+  - When to **add capacity**
+  - When to **remove capacity**
+
+**Example:**
+- If CPU > 70% → add 2 instances
+- If CPU < 20% → remove 1 instance
+
+Step scaling allows more granular control than target tracking.
+
+## Scheduled Scaling
+
+Used when traffic patterns are **known in advance**.
+
+**Example:**
+- Every Friday at 5:00 PM:
+  - Increase minimum capacity to 10
+- Every Saturday at 2:00 AM:
+  - Reduce minimum capacity back to 2
+
+This is useful for:
+- Business hours
+- Marketing campaigns
+- Batch jobs
+
+## Predictive Scaling
+
+- Uses **machine learning**
+- Continuously analyzes **historical load**
+- Forecasts future demand
+- Schedules scaling actions **ahead of time**
+
+Best for:
+- Cyclical traffic
+- Repeating usage patterns
+- Long-running applications
+
+## Common Scaling Metrics
+
+Choosing the right metric depends on your application.
+
+### CPU Utilization
+- Most common
+- Good when requests are compute-heavy
+- Higher CPU = more load → scale out
+
+### RequestCountPerTarget (ALB)
+- Application-specific
+- Based on known optimal request handling
+
+**Example:**
+- Each instance handles ~1000 requests optimally
+- Scale when requests per target exceed threshold
+
+### Network In / Out
+- Useful for:
+  - Upload-heavy applications
+  - Download-heavy workloads
+- Scale when network bandwidth becomes the bottleneck
+
+### Custom CloudWatch Metrics
+- Application-specific metrics
+- Pushed directly to CloudWatch
+- Allows very precise scaling behavior
+
+## Scaling Cooldown
+
+After any scaling activity:
+- ASG enters a **cooldown period**
+- Default: **300 seconds (5 minutes)**
+
+During cooldown:
+- No new scaling actions occur
+- Allows:
+  - Metrics to stabilize
+  - New instances to become effective
+
+### Why Cooldown Matters
+Prevents:
+- Rapid scale-out / scale-in loops
+- Over-reaction to temporary spikes
+
+## Best Practices
+
+- Use **pre-baked AMIs**
+  - Faster boot time
+  - Faster scaling response
+- Reduce cooldown if instances become ready quickly
+- Enable **detailed monitoring**
+  - Metrics every 1 minute
+  - Faster reaction time
+
+## Summary
+
+- **Target Tracking** → simplest, recommended
+- **Step Scaling** → fine-grained control
+- **Scheduled Scaling** → predictable traffic
+- **Predictive Scaling** → recurring patterns
+- Cooldown prevents instability
+- Metrics choice depends on workload
+
+---
