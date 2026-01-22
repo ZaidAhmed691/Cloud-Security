@@ -382,3 +382,137 @@ Do **NOT** use RDS Custom:
 - “Disable automation mode”
 
 All → **RDS Custom**
+
+---
+
+# 5. Amazon Aurora (Exam Summary)
+
+## What Aurora Is
+- **AWS proprietary relational database**
+- **MySQL- and PostgreSQL-compatible**
+  - Same drivers
+  - Minimal application changes
+- **Cloud-optimized**, not open source
+
+Exam signal:
+- “AWS proprietary MySQL/Postgres-compatible DB” → **Aurora**
+
+## Performance & Cost
+- ~**5× faster than MySQL on RDS**
+- ~**3× faster than PostgreSQL on RDS**
+- ~**20% more expensive than RDS**
+- More cost-effective **at scale** due to efficiency
+
+## Storage (Very Important)
+- **Starts at 10 GB**
+- **Automatically scales up to 256 TB**
+- No manual disk management
+- No downtime for storage growth
+
+Exam signal:
+- “Automatic storage scaling without downtime” → **Aurora**
+
+## High Availability Architecture
+- **6 copies of data across 3 AZs**
+- Write requires **4/6 copies**
+- Read requires **3/6 copies**
+- Survives:
+  - AZ failure
+  - Storage failure
+- **Self-healing storage**
+- Data striped across **hundreds of volumes**
+
+Key takeaway:
+- Aurora storage is **distributed, replicated, and self-healing by default**
+
+## Writer & Read Replicas
+- **1 writer (master)**
+- **Up to 15 read replicas**
+- Replication is **very fast** (sub-10 ms lag)
+- Any replica can be **promoted to writer**
+
+Failover:
+- **< 30 seconds** (faster than RDS Multi-AZ)
+
+Exam signal:
+- “Fast failover + read scaling” → **Aurora**
+
+## Endpoints (Extremely Important for Exam)
+
+### Writer Endpoint
+- DNS name
+- Always points to **current writer**
+- Handles failover transparently
+- Applications **never connect directly to instances**
+
+### Reader Endpoint
+- DNS name
+- Load balances **connections** across read replicas
+- Supports **auto-scaling replicas**
+
+Important:
+- Load balancing is **connection-level**, not query-level
+
+Exam signal:
+- “Reader endpoint” or “Writer endpoint” → **Aurora**
+
+## Read Scaling
+- Up to **15 read replicas**
+- Supports **cross-region replication**
+- **Auto-scaling** of read replicas supported
+
+Use cases:
+- Heavy read workloads
+- Global read access
+
+## Backup & Recovery
+- Continuous backups
+- Point-in-time restore
+- **Backtrack feature**
+  - Restore to a specific second in time
+  - Does **not rely on snapshots**
+  - Fast rewind/forward in time
+
+Exam signal:
+- “Restore without snapshot” → **Aurora Backtrack**
+
+## Operations & Management
+Fully managed by AWS:
+- Automated patching (zero downtime)
+- Monitoring & metrics
+- Routine maintenance
+- Security & compliance
+- No OS access required
+
+## Aurora vs RDS (Quick Comparison)
+
+| Feature | RDS | Aurora |
+|------|----|--------|
+| Storage scaling | Manual / Auto (limited) | Fully automatic |
+| Replication | Slower | Sub-10 ms |
+| Failover | Minutes | < 30 sec |
+| Read replicas | Yes | Yes (faster, more scalable) |
+| Architecture | Instance-based | Distributed storage |
+| Cost | Lower | ~20% higher |
+
+## When to Choose Aurora
+Choose **Aurora** when:
+- High availability is critical
+- Fast failover is required
+- Large read scaling is needed
+- You want minimal operational effort
+- Storage growth must be automatic
+
+Do NOT choose Aurora when:
+- You want lowest cost at small scale
+- You need OS-level access (use RDS Custom)
+
+## Exam Keywords to Watch For
+- “Writer endpoint”
+- “Reader endpoint”
+- “6 copies across 3 AZs”
+- “Automatic storage scaling”
+- “Fast failover”
+- “Aurora MySQL / PostgreSQL”
+
+All → **Amazon Aurora**
