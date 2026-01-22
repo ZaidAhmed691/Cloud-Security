@@ -516,3 +516,142 @@ Do NOT choose Aurora when:
 - “Aurora MySQL / PostgreSQL”
 
 All → **Amazon Aurora**
+
+---
+
+## 6. Amazon Aurora – Hands-on Creation, Configuration, and Cleanup
+
+### Overview
+- Amazon Aurora is a **fully managed, high-performance relational database** compatible with **MySQL** and **PostgreSQL**.
+- This hands-on **incurs cost** and is **not part of the Free Tier**.
+- Recommended approach: **observe and understand options** without creating the database if cost is a concern.
+
+### Database Creation
+- **Creation method**: Standard Create
+- **Engine options**:
+  - Aurora MySQL-compatible
+  - Aurora PostgreSQL-compatible
+- **Selected engine**: Aurora MySQL
+- **Engine version**:
+  - Default version suggested by AWS Console (e.g., `3.04.1`)
+  - Filters available:
+    - Global Database support
+    - Parallel Query support
+    - Serverless v2 support
+
+### Template & Credentials
+- **Template**: Production
+  - Allows full configuration flexibility
+- **DB Cluster Identifier**: `database-two`
+- **Master username**: `admin`
+- **Password**: User-defined
+
+### Storage Configuration
+- **Aurora Standard**
+  - Cost-effective for moderate workloads
+- **Aurora IO-Optimized**
+  - Designed for high read/write IOPS workloads
+
+### Instance Configuration
+- **Instance class options**:
+  - Burstable
+  - Memory-optimized
+  - Previous generation instances (optional)
+- **Selected instance**: `db.t3.medium`
+- **Aurora Serverless v2 (optional)**:
+  - Uses **Aurora Capacity Units (ACU)**
+  - Configure minimum and maximum ACUs
+  - Automatically scales compute capacity
+
+### Availability & Durability
+- **Aurora Replica enabled**
+  - Creates a **reader instance in a different AZ**
+  - Benefits:
+    - High availability
+    - Faster failovers
+    - Improved read performance
+  - Higher cost due to multi-AZ setup
+
+### Networking & Connectivity
+- **Network type**: IPv4
+  - Dual-stack (IPv4 + IPv6) supported if VPC allows
+- **VPC**: Default VPC
+- **Public access**: Enabled (for demo purposes)
+- **Security Group**:
+  - New SG created: `demo-database-aurora`
+
+### Additional Configuration
+- **Database port**: `3306` (MySQL)
+- **Local Write Forwarding**
+  - Writes sent to reader are forwarded to writer automatically
+- **Authentication options**:
+  - Password-based
+  - IAM Database Authentication
+  - Kerberos Authentication
+- **Enhanced Monitoring**: Disabled
+- **Initial DB name**: `mydb`
+- **Backup retention**: 1 day
+- **Encryption**: Supported
+- **Deletion protection**: Optional
+
+### Cost Awareness
+- AWS Console displays **estimated monthly cost**
+- Important to review before creation
+
+### Aurora Architecture
+- **Regional cluster**
+  - 1 Writer instance
+  - 1 Reader instance
+  - Instances deployed across different AZs
+- **Endpoints**:
+  - **Writer Endpoint** → Always routes to active writer
+  - **Reader Endpoint** → Load-balances across readers
+  - Each instance also has a **dedicated endpoint**
+- **Best practice**: Applications should use **cluster endpoints**, not instance endpoints
+
+### Scaling Features
+- **Read Replica Scaling**
+  - Add more readers manually for scaling
+- **Read Replica Auto Scaling**
+  - Policy-based scaling
+  - Metrics:
+    - Average CPU utilization
+    - Number of connections
+  - Example:
+    - Target utilization: 60%
+    - Min replicas: 1
+    - Max replicas: 15
+- **Cross-region read replicas**
+  - Used for global reads and disaster recovery
+
+### Global Database
+- Available only if:
+  - Aurora version supports **Global Database**
+  - Instance size is compatible (e.g., Large or higher)
+- Enables:
+  - Cross-region replication
+  - Low-latency global reads
+
+### Database Deletion (Cleanup)
+**Important**: Aurora clusters cannot be deleted directly.
+
+Steps:
+1. Delete **Reader instance**
+   - Confirm by typing: `delete me`
+2. Delete **Writer instance**
+   - Confirm by typing: `delete me`
+3. Delete the **Aurora cluster**
+
+Once all components are removed, the database is fully deleted.
+
+### Key Takeaways
+- Aurora provides:
+  - High performance
+  - Multi-AZ availability
+  - Reader/writer separation
+  - Auto scaling
+  - Serverless capability
+  - Global database support
+- Powerful but **cost-sensitive**
+- Ideal for **production-grade workloads**
+
