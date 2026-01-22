@@ -767,3 +767,114 @@ All → **Amazon Aurora**
   - SCT and DMS handle schema and data migration
 
 ---
+
+# 8. RDS and Aurora Backup, Restore, and Cloning
+
+## RDS Automated Backups
+- Managed automatically by the RDS service
+- Performs:
+  - Daily full backup during the backup window
+  - Transaction log backups every 5 minutes
+- Enables Point-in-Time Recovery (PITR):
+  - Restore to any point up to **5 minutes before the current time**
+- Retention period:
+  - Configurable from **1 to 35 days**
+- Disabling automated backups:
+  - Set retention period to **0**
+  - This fully disables automated backups
+
+## RDS Manual DB Snapshots
+- Manually triggered by the user
+- Retention:
+  - Kept **as long as you want**
+- Key difference from automated backups:
+  - Automated backups expire
+  - Manual snapshots do not expire unless deleted
+
+## Cost-Saving Backup Strategy (Exam Tip)
+- Use case:
+  - Database is used infrequently (e.g., a few hours per month)
+- Recommended approach:
+  1. Use the database when needed
+  2. Take a manual snapshot
+  3. Delete the RDS database
+  4. Retain the snapshot (cheaper storage)
+  5. Restore the snapshot when needed again
+- Advantage:
+  - Snapshot storage costs less than running an idle RDS instance
+
+## Aurora Backups
+- Similar to RDS but with key differences
+- Automated backups:
+  - Enabled by default
+  - Retention: **1 to 35 days**
+  - **Cannot be disabled**
+- Supports Point-in-Time Recovery within the retention window
+- Manual DB snapshots:
+  - User-triggered
+  - Retained indefinitely
+- Key takeaway:
+  - Aurora and RDS backups behave similarly
+  - Aurora always has automated backups enabled
+
+## Restore Options Overview
+- Restoring from:
+  - Automated backups
+  - Manual snapshots
+- Behavior:
+  - Restore always creates a **new database**
+  - Original database remains unchanged
+
+## Restoring RDS MySQL from Amazon S3
+- Use case:
+  - Restore an on-premises MySQL database into RDS
+- Steps:
+  1. Take a backup of the on-premises database
+  2. Upload backup file to Amazon S3
+  3. Restore the backup from S3 into a new RDS MySQL instance
+
+## Restoring Aurora MySQL from Amazon S3
+- Requires a specific backup method
+- Steps:
+  1. Take an on-premises database backup using **Percona XtraBackup**
+  2. Upload the backup file to Amazon S3
+  3. Restore the backup into a new Aurora MySQL cluster
+- Key difference:
+  - RDS MySQL: Standard database backup
+  - Aurora MySQL: **Percona XtraBackup is required**
+
+## Aurora Database Cloning
+- Creates a new Aurora cluster from an existing one
+- Common use case:
+  - Clone a production database to create a staging or test environment
+- Benefits:
+  - Extremely fast
+  - More efficient than snapshot and restore
+  - No impact on production workloads
+
+## How Aurora Cloning Works (Copy-on-Write)
+- Initial state:
+  - Clone shares the same underlying data volume as the source database
+  - No data is copied initially
+- As changes occur:
+  - Modified data is copied to new storage blocks
+  - Original and cloned databases diverge only where changes exist
+- Advantages:
+  - Fast creation
+  - Cost-efficient storage usage
+  - Ideal for testing, staging, and experimentation
+
+## Key Takeaways
+- Automated backups:
+  - RDS: Optional
+  - Aurora: Mandatory
+- Manual snapshots:
+  - Long-term retention
+  - Useful for cost optimization
+- Restore operations:
+  - Always create new databases
+- Aurora cloning:
+  - Fast, efficient alternative to snapshot and restore
+  - Perfect for staging environments
+
+---
