@@ -289,3 +289,96 @@ Exam signal:
 - Security group access patterns
 
 ---
+
+# 4. Amazon RDS Custom (Exam Summary)
+
+## What RDS Custom Is
+- **RDS Custom = managed database + OS access**
+- AWS still manages:
+  - Provisioning
+  - Scaling
+  - Backups
+- **You get access to the underlying EC2 instance and OS**
+
+## Supported Engines (Very Important)
+RDS Custom is available **ONLY** for:
+- **Oracle**
+- **Microsoft SQL Server**
+
+Exam signal:
+- “Need OS access on RDS” → **RDS Custom (Oracle / SQL Server)**
+
+## Why RDS Custom Exists
+Standard RDS:
+- No SSH
+- No OS-level access
+- No deep DB customization
+
+RDS Custom:
+- Full admin access to:
+  - Operating system
+  - Database engine
+- Allows:
+  - Custom patches
+  - Native DB features
+  - Internal configuration changes
+
+## Access & Customization
+With RDS Custom you can:
+- SSH into the underlying EC2 instance
+- Use **SSM Session Manager**
+- Modify OS and database settings directly
+
+This breaks the “black box” limitation of normal RDS.
+
+## Automation Mode (Critical Concept)
+- RDS Custom normally runs with **automation enabled**
+- Before making changes:
+  - **Disable automation mode**
+  - Prevents AWS from:
+    - Applying patches
+    - Restarting services
+    - Overwriting your changes
+
+Exam signal:
+- “Prevent AWS from interfering with custom DB changes” → **Disable automation mode**
+
+## Risk & Best Practice
+- Because you can modify the OS:
+  - You can **break the database**
+- **Strongly recommended**:
+  - Take a **manual snapshot** before customization
+- If broken:
+  - Restore from snapshot
+
+Exam signal:
+- “Recover from bad OS changes” → **Restore snapshot**
+
+## RDS vs RDS Custom (One-Line Comparison)
+
+| Feature | RDS | RDS Custom |
+|------|----|-----------|
+| OS access | ❌ No | ✅ Yes |
+| SSH / SSM | ❌ No | ✅ Yes |
+| AWS-managed automation | ✅ Full | ⚠️ Can be disabled |
+| Supported engines | Many | Oracle, SQL Server |
+| Custom patches | ❌ No | ✅ Yes |
+
+## When to Use RDS Custom
+Use **RDS Custom** when:
+- Vendor requires OS-level changes
+- You need native Oracle / SQL Server features
+- Compliance requires custom configuration
+
+Do **NOT** use RDS Custom:
+- For MySQL / PostgreSQL
+- If you want zero operational responsibility
+
+## Exam Keywords to Watch For
+- “OS-level access”
+- “SSH into RDS”
+- “Custom database patches”
+- “Oracle / SQL Server customization”
+- “Disable automation mode”
+
+All → **RDS Custom**
