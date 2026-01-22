@@ -519,139 +519,135 @@ All → **Amazon Aurora**
 
 ---
 
-## 6. Amazon Aurora – Hands-on Creation, Configuration, and Cleanup
+# 6. Amazon Aurora – Hands-on Creation, Configuration, and Cleanup
 
-### Overview
-- Amazon Aurora is a **fully managed, high-performance relational database** compatible with **MySQL** and **PostgreSQL**.
-- This hands-on **incurs cost** and is **not part of the Free Tier**.
-- Recommended approach: **observe and understand options** without creating the database if cost is a concern.
+## Overview
+- Amazon Aurora is a fully managed, high-performance relational database compatible with MySQL and PostgreSQL.
+- This hands-on exercise incurs cost and is not part of the Free Tier.
+- Best practice: understand the configuration options without creating the database if cost is a concern.
 
-### Database Creation
-- **Creation method**: Standard Create
-- **Engine options**:
+## Database Creation
+- Creation method: Standard Create
+- Engine options:
   - Aurora MySQL-compatible
   - Aurora PostgreSQL-compatible
-- **Selected engine**: Aurora MySQL
-- **Engine version**:
-  - Default version suggested by AWS Console (e.g., `3.04.1`)
+- Selected engine: Aurora MySQL
+- Engine version:
+  - Default version suggested by the AWS Console (e.g., 3.04.1)
   - Filters available:
     - Global Database support
     - Parallel Query support
     - Serverless v2 support
 
-### Template & Credentials
-- **Template**: Production
-  - Allows full configuration flexibility
-- **DB Cluster Identifier**: `database-two`
-- **Master username**: `admin`
-- **Password**: User-defined
+## Template and Credentials
+- Template: Production
+  - Enables full configuration control
+- DB Cluster Identifier: `database-two`
+- Master username: `admin`
+- Password: User-defined
 
-### Storage Configuration
-- **Aurora Standard**
+## Storage Configuration
+- Aurora Standard
   - Cost-effective for moderate workloads
-- **Aurora IO-Optimized**
-  - Designed for high read/write IOPS workloads
+- Aurora IO-Optimized
+  - Optimized for high read/write IOPS workloads
 
-### Instance Configuration
-- **Instance class options**:
+## Instance Configuration
+- Instance class options:
   - Burstable
   - Memory-optimized
   - Previous generation instances (optional)
-- **Selected instance**: `db.t3.medium`
-- **Aurora Serverless v2 (optional)**:
-  - Uses **Aurora Capacity Units (ACU)**
+- Selected instance: `db.t3.medium`
+- Aurora Serverless v2 (optional):
+  - Uses Aurora Capacity Units (ACU)
   - Configure minimum and maximum ACUs
-  - Automatically scales compute capacity
+  - Automatic compute scaling
 
-### Availability & Durability
-- **Aurora Replica enabled**
-  - Creates a **reader instance in a different AZ**
+## Availability and Durability
+- Aurora Replica enabled
+  - Creates a reader instance in a different Availability Zone
   - Benefits:
     - High availability
     - Faster failovers
     - Improved read performance
-  - Higher cost due to multi-AZ setup
+  - Increases cost due to multi-AZ deployment
 
-### Networking & Connectivity
-- **Network type**: IPv4
+## Networking and Connectivity
+- Network type: IPv4
   - Dual-stack (IPv4 + IPv6) supported if VPC allows
-- **VPC**: Default VPC
-- **Public access**: Enabled (for demo purposes)
-- **Security Group**:
+- VPC: Default VPC
+- Public access: Enabled (demo use case)
+- Security Group:
   - New SG created: `demo-database-aurora`
 
-### Additional Configuration
-- **Database port**: `3306` (MySQL)
-- **Local Write Forwarding**
-  - Writes sent to reader are forwarded to writer automatically
-- **Authentication options**:
+## Additional Configuration
+- Database port: `3306` (MySQL)
+- Local Write Forwarding
+  - Writes sent to reader are forwarded to the writer automatically
+- Authentication options:
   - Password-based
   - IAM Database Authentication
   - Kerberos Authentication
-- **Enhanced Monitoring**: Disabled
-- **Initial DB name**: `mydb`
-- **Backup retention**: 1 day
-- **Encryption**: Supported
-- **Deletion protection**: Optional
+- Enhanced Monitoring: Disabled
+- Initial database name: `mydb`
+- Backup retention: 1 day
+- Encryption: Supported
+- Deletion protection: Optional
 
-### Cost Awareness
-- AWS Console displays **estimated monthly cost**
-- Important to review before creation
+## Cost Awareness
+- AWS Console displays estimated monthly cost before creation
+- Critical to review costs prior to provisioning
 
-### Aurora Architecture
-- **Regional cluster**
-  - 1 Writer instance
-  - 1 Reader instance
-  - Instances deployed across different AZs
-- **Endpoints**:
-  - **Writer Endpoint** → Always routes to active writer
-  - **Reader Endpoint** → Load-balances across readers
-  - Each instance also has a **dedicated endpoint**
-- **Best practice**: Applications should use **cluster endpoints**, not instance endpoints
+## Aurora Architecture
+- Regional cluster consists of:
+  - One Writer instance
+  - One Reader instance
+  - Instances distributed across different Availability Zones
+- Endpoints:
+  - Writer Endpoint: Always routes to the active writer
+  - Reader Endpoint: Load-balances read traffic across readers
+  - Each instance also has its own dedicated endpoint
+- Best practice: Applications should use cluster endpoints instead of instance endpoints
 
-### Scaling Features
-- **Read Replica Scaling**
-  - Add more readers manually for scaling
-- **Read Replica Auto Scaling**
-  - Policy-based scaling
-  - Metrics:
+## Scaling Features
+- Manual Read Replica Scaling
+  - Add additional readers to increase read throughput
+- Read Replica Auto Scaling
+  - Policy-based scaling using metrics such as:
     - Average CPU utilization
     - Number of connections
-  - Example:
+  - Example configuration:
     - Target utilization: 60%
-    - Min replicas: 1
-    - Max replicas: 15
-- **Cross-region read replicas**
-  - Used for global reads and disaster recovery
+    - Minimum replicas: 1
+    - Maximum replicas: 15
+- Cross-region read replicas
+  - Used for global read access and disaster recovery
 
-### Global Database
+## Global Database
 - Available only if:
-  - Aurora version supports **Global Database**
+  - Aurora version supports Global Database
   - Instance size is compatible (e.g., Large or higher)
 - Enables:
   - Cross-region replication
   - Low-latency global reads
 
-### Database Deletion (Cleanup)
-**Important**: Aurora clusters cannot be deleted directly.
+## Database Deletion and Cleanup
+- Aurora clusters cannot be deleted directly
+- Required steps:
+  1. Delete the Reader instance (confirm with `delete me`)
+  2. Delete the Writer instance (confirm with `delete me`)
+  3. Delete the Aurora cluster
+- Cluster deletion is possible only after all instances are removed
 
-Steps:
-1. Delete **Reader instance**
-   - Confirm by typing: `delete me`
-2. Delete **Writer instance**
-   - Confirm by typing: `delete me`
-3. Delete the **Aurora cluster**
-
-Once all components are removed, the database is fully deleted.
-
-### Key Takeaways
+## Key Takeaways
 - Aurora provides:
   - High performance
   - Multi-AZ availability
   - Reader/writer separation
-  - Auto scaling
-  - Serverless capability
+  - Automatic and manual scaling
+  - Serverless capabilities
   - Global database support
-- Powerful but **cost-sensitive**
-- Ideal for **production-grade workloads**
+- Powerful production-grade database, but cost-sensitive
+- Best suited for scalable, high-availability workloads
 
+---
