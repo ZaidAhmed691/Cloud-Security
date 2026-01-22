@@ -651,3 +651,119 @@ All → **Amazon Aurora**
 - Best suited for scalable, high-availability workloads
 
 ---
+
+# 7. Amazon Aurora – Advanced Concepts for the Exam
+
+## Replica Auto Scaling
+- Used to automatically scale **read replicas** based on load
+- Typical setup:
+  - 1 Writer instance (writer endpoint)
+  - Multiple Reader instances (reader endpoint)
+- Scenario:
+  - Increased read traffic causes high CPU usage on reader instances
+  - Replica Auto Scaling adds new Aurora read replicas automatically
+  - Reader endpoint automatically includes new replicas
+- Benefits:
+  - Distributes read traffic more evenly
+  - Reduces CPU utilization
+  - Improves read performance without manual intervention
+
+## Custom Endpoints
+- Used when read replicas have **different instance sizes**
+  - Example:
+    - Smaller instances: `db.r3.large`
+    - Larger instances: `db.r5.2xlarge`
+- Purpose:
+  - Create a **custom endpoint** that targets a specific subset of replicas
+- Common use case:
+  - Route analytical or heavy queries to larger instances
+  - Keep lightweight reads on smaller replicas
+- Key behavior:
+  - Reader endpoint still exists but is typically not used
+  - Applications explicitly connect to custom endpoints
+- Best practice:
+  - Create multiple custom endpoints for different workloads
+
+## Aurora Serverless
+- Fully managed, on-demand Aurora capacity
+- Key characteristics:
+  - Automatic database instantiation
+  - Automatic scaling based on actual usage
+  - No capacity planning required
+- Ideal workloads:
+  - Infrequent
+  - Intermittent
+  - Unpredictable traffic patterns
+- Cost model:
+  - Pay per second for Aurora capacity used
+  - Can be significantly more cost-effective
+- Architecture:
+  - Client connects to an Aurora-managed proxy fleet
+  - Backend Aurora instances scale up or down automatically
+  - No fixed instances provisioned in advance
+
+## Aurora Global Database
+- Designed for:
+  - Low-latency global reads
+  - Disaster recovery
+- Two approaches:
+  - Cross-Region Read Replica (simpler)
+  - Aurora Global Database (recommended)
+- Global Database characteristics:
+  - One **primary region** (reads and writes)
+  - Up to **10 secondary read-only regions**
+  - Up to **16 read replicas per secondary region**
+  - Cross-region replication lag: **< 1 second**
+- Disaster Recovery:
+  - Secondary region can be promoted to read-write
+  - Recovery Time Objective (RTO): **< 1 minute**
+- Exam keyword:
+  - “Replicates data across regions in less than one second” → Use **Aurora Global Database**
+- Example:
+  - Primary: `us-east-1`
+  - Secondary: `eu-west-1`
+  - Applications read locally, fail over if primary fails
+
+## Aurora Machine Learning
+- Enables ML-based predictions directly via **SQL queries**
+- Seamless integration between Aurora and AWS ML services
+- Supported services:
+  - Amazon SageMaker
+    - Any custom ML model
+  - Amazon Comprehend
+    - Sentiment analysis
+- Key points:
+  - No ML expertise required
+  - Predictions accessed through SQL
+- Common use cases:
+  - Fraud detection
+  - Product recommendations
+  - Ads targeting
+  - Sentiment analysis
+- Architecture flow:
+  - Application runs SQL query
+  - Aurora sends data to ML service
+  - ML service returns prediction
+  - Aurora returns result as SQL query output
+
+## Babelfish for Aurora PostgreSQL
+- Enables Aurora PostgreSQL to understand **T-SQL**
+- Purpose:
+  - Migrate from Microsoft SQL Server to Aurora PostgreSQL
+  - Avoid rewriting application code
+- How it works:
+  - Applications continue using:
+    - SQL Server client driver
+    - T-SQL language
+  - Babelfish translates T-SQL into PostgreSQL-compatible queries
+- Benefits:
+  - Minimal to no application code changes
+  - Simplifies database migrations
+- Migration tools:
+  - AWS Schema Conversion Tool (SCT)
+  - AWS Database Migration Service (DMS)
+- Key takeaway:
+  - Babelfish handles SQL translation
+  - SCT and DMS handle schema and data migration
+
+---
