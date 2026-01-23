@@ -878,3 +878,74 @@ All → **Amazon Aurora**
   - Perfect for staging environments
 
 ---
+
+# 9. RDS and Aurora Security
+
+## Encryption at Rest
+- Data is encrypted on disk volumes for both RDS and Aurora
+- Uses AWS Key Management Service (KMS)
+- Applies to:
+  - Primary (master) database
+  - All read replicas
+- Must be enabled **at database creation time**
+- Important rules:
+  - If the primary database is **not encrypted**, read replicas **cannot be encrypted**
+  - Encryption settings cannot be changed in-place
+
+## Encrypting an Existing Unencrypted Database
+- Direct encryption of an existing database is **not possible**
+- Required process:
+  1. Take a snapshot of the unencrypted database
+  2. Restore the snapshot as a **new encrypted database**
+- This snapshot-and-restore approach is the only supported method
+
+## Encryption in Transit (In-Flight Encryption)
+- Encrypts data between clients and the database
+- Enabled by default for RDS and Aurora
+- Uses TLS (SSL) encryption
+- Client requirements:
+  - Must use AWS-provided TLS root certificates
+  - Certificates are available from the AWS documentation
+
+## Database Authentication
+- Supported authentication methods:
+  - Traditional username and password
+  - IAM-based authentication
+- IAM Database Authentication:
+  - Allows AWS resources (e.g., EC2 with IAM roles) to authenticate without passwords
+  - Centralized access control using IAM
+  - Reduces credential management overhead
+
+## Network Security
+- Access is controlled using **Security Groups**
+- Security Groups allow:
+  - Restricting inbound traffic by port
+  - Allowing or denying specific IP addresses
+  - Allowing access from specific security groups
+- Provides network-level isolation for databases
+
+## Administrative Access
+- RDS and Aurora are fully managed services
+- SSH access to database instances is **not available**
+- Exception:
+  - SSH access is possible only with **RDS Custom** (special use case)
+
+## Audit Logging
+- Audit Logs track:
+  - Database activity
+  - Queries and operational events
+- Logs are retained for a limited time by default
+- Long-term retention:
+  - Export Audit Logs to **Amazon CloudWatch Logs**
+  - Enables monitoring, alerting, and historical analysis
+
+## Key Takeaways
+- Encryption:
+  - At rest via KMS
+  - In transit via TLS
+- IAM authentication improves security and credential management
+- Network access is tightly controlled using security groups
+- No SSH access for standard RDS and Aurora
+- Audit Logs should be sent to CloudWatch Logs for long-term visibility
+
+---
