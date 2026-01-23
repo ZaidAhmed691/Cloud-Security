@@ -949,3 +949,111 @@ All → **Amazon Aurora**
 - Audit Logs should be sent to CloudWatch Logs for long-term visibility
 
 ---
+
+# 10. Amazon RDS Proxy
+
+## Overview
+- Amazon RDS Proxy is a **fully managed, serverless database proxy** deployed within your VPC
+- Works with both **RDS and Aurora**
+- Applications connect to the proxy instead of directly connecting to the database
+
+## Why Use RDS Proxy
+- Applications typically open many database connections
+- Direct connections can:
+  - Exhaust database CPU and memory
+  - Cause connection storms
+  - Lead to timeouts and instability
+- RDS Proxy **pools and shares database connections**
+  - Many application connections → fewer database connections
+- Improves overall database efficiency and stability
+
+## Connection Pooling and Efficiency
+- Applications connect to the proxy
+- Proxy maintains a pool of connections to the database
+- Benefits:
+  - Reduced number of open database connections
+  - Lower CPU and RAM usage on the database
+  - Fewer connection timeouts
+- Exam keyword:
+  - “Too many connections” → **RDS Proxy**
+
+## Serverless and High Availability
+- Fully serverless:
+  - No capacity planning required
+  - Automatically scales based on demand
+- Highly available:
+  - Deployed across multiple Availability Zones
+- No operational overhead for managing the proxy
+
+## Failover Improvements
+- RDS Proxy significantly improves failover handling
+- During database failover:
+  - Applications stay connected to the proxy
+  - Proxy transparently redirects connections
+- Failover time reduction:
+  - Up to **66% faster**
+- Supported for:
+  - RDS
+  - Aurora
+- Exam keyword:
+  - “Reduce failover time” → **RDS Proxy**
+
+## Supported Databases
+- MySQL
+- PostgreSQL
+- MariaDB
+- Microsoft SQL Server
+- Aurora MySQL
+- Aurora PostgreSQL
+
+## Application Integration
+- No application code changes required
+- Only change:
+  - Update the database endpoint to the **RDS Proxy endpoint**
+- Applications remain unaware of failovers and scaling events
+
+## IAM Authentication and Secrets Management
+- RDS Proxy can enforce **IAM-based authentication**
+- Benefits:
+  - No hard-coded database credentials
+  - Centralized access control via IAM
+- Credentials are securely stored in:
+  - **AWS Secrets Manager**
+- Exam keyword:
+  - “Enforce IAM authentication for RDS” → **RDS Proxy**
+
+## Network Security
+- RDS Proxy is **never publicly accessible**
+- Accessible only from within the VPC
+- Enhances security by eliminating internet exposure
+
+## Lambda and RDS Proxy (Critical Use Case)
+- AWS Lambda functions:
+  - Scale rapidly
+  - Start and stop frequently
+  - Can create thousands of short-lived connections
+- Problem:
+  - Direct Lambda → RDS connections cause connection storms
+- Solution:
+  - Lambda connects to RDS Proxy
+  - Proxy pools and manages connections efficiently
+- Result:
+  - Lambda overloads the proxy (by design)
+  - Database remains stable
+- Exam keyword:
+  - “Lambda + RDS connection issue” → **RDS Proxy**
+
+## Key Takeaways
+- RDS Proxy:
+  - Pools and manages database connections
+  - Reduces CPU, memory usage, and timeouts
+  - Improves failover time by up to 66%
+  - Enforces IAM authentication
+  - Stores credentials in Secrets Manager
+  - Is serverless, highly available, and VPC-only
+- Ideal for:
+  - High-connection workloads
+  - Lambda-based architectures
+  - Secure, resilient database access
+
+---
