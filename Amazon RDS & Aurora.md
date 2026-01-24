@@ -1189,3 +1189,150 @@ All → **Amazon Aurora**
   - Read performance optimization
 
 ---
+
+# 12. Amazon ElastiCache Hands-on (Redis)
+
+## Overview
+- Amazon ElastiCache supports multiple engines:
+  - Valkey (Redis-compatible, recommended)
+  - Redis OSS
+  - Memcached
+- Redis and Valkey expose the **same configuration options**
+- Two deployment models:
+  - Serverless
+  - Node-based cluster
+- For learning and visibility into internals, **node-based cluster** is preferred
+
+## Engine and Deployment Selection
+- Selected engine: Redis
+- Deployment type: Node-based cluster
+- Restore options:
+  - Restore from backup
+  - Easy create (best-practice presets)
+- Configuration approach:
+  - Manual configuration to explore all available options
+
+## Cluster Mode
+- Cluster mode disabled:
+  - Single shard
+  - One primary node
+  - Up to five read replicas
+- Cluster mode enabled (not used here):
+  - Multiple shards
+  - Horizontal scaling across nodes
+- Selected: Cluster mode disabled (simpler and cheaper)
+
+## Cluster Identification and Location
+- Cluster name: `DemoCluster`
+- Location:
+  - AWS Cloud
+  - Optionally AWS Outposts for on-premises deployments
+
+## High Availability Options
+- Multi-AZ:
+  - Improves availability and failover
+  - Increases cost
+  - Disabled for demo
+- Auto-failover:
+  - Enabled
+  - Automatically promotes a replica if the primary fails
+
+## Cluster Settings
+- Configurable options:
+  - Engine version
+  - Port
+  - Parameter groups
+- Node type selection:
+  - Examples:
+    - `t2.micro`
+    - `t3.micro`
+    - `t4g.micro`
+  - Free tier eligible:
+    - `t2.micro`
+    - `t3.micro`
+- Selected node type: `t2.micro`
+
+## Replicas
+- Read replicas:
+  - Used for scaling and high availability
+- Selected replicas: 0
+  - Chosen to minimize cost
+  - In production with Multi-AZ, replicas are recommended
+
+## Subnet Group Configuration
+- Subnet group created: `my-first-subnet-group`
+- Purpose:
+  - Defines which subnets ElastiCache nodes can run in
+- VPC selection:
+  - VPC chosen
+  - Subnets auto-selected or manually specified
+
+## Availability Zone Placement
+- AZ placement options available
+- Not relevant without Multi-AZ or replicas
+- Left with default configuration
+
+## Security Configuration
+- Encryption at rest:
+  - Optional
+  - Requires KMS key
+- Encryption in transit:
+  - Encrypts traffic between client and cache
+  - Enables access control features
+- Access control options (Redis):
+  - Redis AUTH (password / auth token)
+  - User groups with ACLs
+- Selected for demo:
+  - Encryption at rest: Disabled
+  - Encryption in transit: Disabled
+- Network security:
+  - Security groups control which applications can access the cache
+
+## Backup and Maintenance
+- Backup options:
+  - Optional snapshots
+- Maintenance settings:
+  - Maintenance windows for minor version upgrades
+- Logging:
+  - Slow logs
+  - Engine logs
+  - Can be sent to CloudWatch Logs
+- Tags:
+  - Optional metadata for cost allocation and organization
+
+## Cluster Creation and Access
+- Review configuration
+- Create the Redis cluster
+- After creation:
+  - Primary endpoint available for read/write
+  - Reader endpoint available if replicas exist
+- Applications connect using:
+  - Primary endpoint
+  - Reader endpoint (if applicable)
+
+## Monitoring and Management
+- Console provides visibility into:
+  - Nodes
+  - Metrics
+  - Logs
+  - Network security
+- Experience similar to RDS management
+- No direct console-based Redis interaction without application code
+
+## Cluster Deletion
+- Cleanup steps:
+  1. Select cluster
+  2. Choose Delete
+  3. Skip backup
+  4. Confirm deletion by typing cluster name
+- Cluster is fully removed after confirmation
+
+## Key Takeaways
+- ElastiCache configuration is conceptually similar to RDS
+- Redis node-based clusters provide:
+  - Fine-grained control
+  - Clear understanding of HA and scaling concepts
+- Requires application-level integration
+- Always delete demo clusters to avoid unnecessary costs
+
+---
