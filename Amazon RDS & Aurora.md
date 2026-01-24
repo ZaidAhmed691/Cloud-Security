@@ -1057,3 +1057,135 @@ All → **Amazon Aurora**
   - Secure, resilient database access
 
 ---
+
+# 11. Amazon ElastiCache (Redis and Memcached)
+
+## Overview
+- Amazon ElastiCache provides **managed in-memory data stores**
+- Supported engines:
+  - Redis
+  - Memcached
+- Similar to how RDS manages relational databases, ElastiCache manages caching engines
+- Designed for:
+  - **High performance**
+  - **Low latency**
+  - **Read-intensive workloads**
+
+## What Is Caching
+- Cache = in-memory database
+- Purpose:
+  - Reduce load on primary databases
+  - Serve frequently accessed data quickly
+- Common use cases:
+  - Frequently executed read queries
+  - User session storage
+- Benefits:
+  - Faster application response times
+  - Reduced database load
+  - Improved scalability
+
+## Managed Service Benefits
+- AWS handles:
+  - OS maintenance
+  - Patching and upgrades
+  - Configuration and optimization
+  - Monitoring
+  - Failure recovery
+  - Backups (engine-dependent)
+- Similar operational benefits to RDS
+
+## Application Changes Required
+- ElastiCache is **not plug-and-play**
+- Requires **application code changes**
+- Application must:
+  - Query the cache before or after the database
+  - Implement caching logic and invalidation strategies
+
+## Cache Architecture (Read Optimization)
+- Typical flow:
+  1. Application queries ElastiCache
+  2. If data exists → **Cache Hit**
+     - Data returned directly from cache
+     - No database query
+  3. If data does not exist → **Cache Miss**
+     - Application queries the database
+     - Result is written back to cache
+- Outcome:
+  - Reduced database load
+  - Faster repeated queries
+
+## Cache Invalidation
+- Cached data can become stale
+- Requires a cache invalidation strategy to ensure data freshness
+- One of the main complexities of caching systems
+
+## Session Storage Architecture (Stateless Applications)
+- Use case:
+  - User login sessions
+- Flow:
+  1. User logs in
+  2. Application stores session data in ElastiCache
+  3. User is routed to any application instance
+  4. Application retrieves session from ElastiCache
+- Result:
+  - Application becomes **stateless**
+  - Improved scalability and resilience
+
+## Redis vs Memcached – High-Level Comparison
+
+## Redis
+- Supports:
+  - Multi-AZ with auto-failover
+  - Read replicas for scaling reads
+  - High availability
+- Data durability:
+  - AOF (Append-Only File) persistence
+- Backup and restore:
+  - Supported
+- Advanced data types:
+  - Sets
+  - Sorted sets
+- Common use cases:
+  - Leaderboards
+  - Counters
+  - Session storage
+- Mental model:
+  - Primary Redis node replicated to replicas
+
+## Memcached
+- Architecture:
+  - Multi-node sharded setup
+  - Data partitioned across nodes
+- High availability:
+  - No replication
+  - No built-in failover
+- Data durability:
+  - No persistence
+- Backup and restore:
+  - Only available in serverless Memcached
+- Performance:
+  - Multi-threaded architecture
+- Risk:
+  - Cache loss if nodes fail
+- Mental model:
+  - Multiple nodes sharing and partitioning data
+
+## Exam Notes
+- ElastiCache:
+  - Used to reduce database load
+  - Improves read performance
+  - Enables stateless applications
+- Redis:
+  - High availability
+  - Persistence
+  - Advanced data structures
+- Memcached:
+  - Simple
+  - High performance
+  - No persistence or HA
+- Exam questions usually focus on:
+  - Why use caching
+  - Stateless application design
+  - Read performance optimization
+
+---
